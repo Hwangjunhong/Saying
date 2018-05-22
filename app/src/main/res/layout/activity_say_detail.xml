@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.hong.saying.SayDetailActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:contentInsetStart="0dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/back_bt"
+                    android:layout_width="?attr/actionBarSize"
+                    android:layout_height="match_parent"
+                    android:padding="15dp"
+                    android:src="@drawable/back" />
+
+                <ImageView
+                    android:id="@+id/share_bt"
+                    android:layout_width="?attr/actionBarSize"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:padding="15dp"
+                    android:src="@drawable/share" />
+
+            </RelativeLayout>
+        </android.support.v7.widget.Toolbar>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <android.support.v7.widget.CardView
+                    android:id="@+id/card_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:layout_margin="10dp"
+                    app:cardElevation="10dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <ImageView
+                            android:id="@+id/image"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentTop="true"
+                            android:background="#ddd"
+                            android:scaleType="centerCrop"
+                            tools:src="@drawable/example" />
+
+                        <TextView
+                            android:id="@+id/say"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_centerInParent="true"
+                            android:background="@null"
+                            android:maxHeight="200dp"
+                            android:padding="20dp"
+                            android:textColor="@android:color/white"
+                            android:textColorHint="@android:color/white"
+                            android:textSize="16dp"
+                            tools:text="HWANG JUN HONG"/>
+
+                    </RelativeLayout>
+                </android.support.v7.widget.CardView>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/profile_image"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:layout_marginStart="20dp"
+                        tools:src="@drawable/user" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@+id/profile_image"
+                        android:layout_centerVertical="true"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginStart="10dp"
+                        android:textColor="@android:color/black"
+                        android:textSize="17dp"
+                        tools:text="Hong"
+                        android:id="@+id/user_name"/>
+
+                </RelativeLayout>
+            </LinearLayout>
+        </ScrollView>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/bottom_sheet_behavior"
+        app:behavior_peekHeight="60dp"
+        app:behavior_hideable="false"
+        android:id="@+id/bottom_sheet">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:background="@drawable/bottom_sheet_shadow"
+            android:id="@+id/shadow"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_below="@+id/shadow"
+            android:id="@+id/open_close"
+            android:background="@android:color/white">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="댓글"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="40dp"
+                android:textSize="17dp"
+                android:textColor="@android:color/black"/>
+
+
+            <ImageView
+                android:layout_width="55dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/down_arrow"
+                android:padding="15dp"
+                android:rotation="180"
+                android:id="@+id/open_close_arrow"/>
+
+        </RelativeLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/open_close"
+            android:id="@+id/comment_recycler"
+            android:background="@android:color/white"
+            android:layout_above="@+id/comment_layout" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_alignParentBottom="true"
+            android:background="@android:color/white"
+            android:id="@+id/comment_layout">
+
+            <EditText
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:minHeight="50dp"
+                android:maxHeight="200dp"
+                android:id="@+id/comment_edit"
+                android:background="@null"
+                android:paddingStart="20dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:layout_marginEnd="20dp"
+                android:textColor="@android:color/black"
+                android:hint="메시지를 입력해 주세요"/>
+
+            <RelativeLayout
+                android:layout_width="55dp"
+                android:layout_height="match_parent"
+                android:id="@+id/send_comment">
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@drawable/send"
+                    android:layout_centerInParent="true" />
+
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</android.support.design.widget.CoordinatorLayout>
