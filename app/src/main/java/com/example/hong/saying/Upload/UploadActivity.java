@@ -453,7 +453,7 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public void completeFileUpload(String url) {
         if (!TextUtils.isEmpty(url)) {
-            imageUrl = url;
+//            imageUrl = url;
             uploadData();
         } else {
             Toast.makeText(this, "데이터 업로드 실패", Toast.LENGTH_SHORT).show();

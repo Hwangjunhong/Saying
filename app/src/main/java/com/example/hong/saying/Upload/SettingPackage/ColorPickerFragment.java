@@ -40,7 +40,7 @@ public class ColorPickerFragment extends Fragment implements View.OnClickListene
     }
 
     private void initView(View view) {
-        colorSeekBar = view.findViewById(R.id.colorSlider);
+        colorSeekBar = view.findViewById(R.id.colorSeekBar);
         cancel = view.findViewById(R.id.cancel);
         complete = view.findViewById(R.id.complete);
         white = view.findViewById(R.id.white);

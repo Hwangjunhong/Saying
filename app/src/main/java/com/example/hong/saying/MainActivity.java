@@ -1,5 +1,6 @@
 package com.example.hong.saying;
 
+import android.accounts.Account;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -110,8 +111,10 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.setting_btn:
-                startActivity(new Intent(this, AccountActivity.class));
-//                finish();
+                Intent intent = new Intent(this, AccountActivity.class);
+                startActivity(intent);
+                finish();
+                break;
         }
         return true;
     }

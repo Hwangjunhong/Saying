@@ -12,10 +12,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
 import com.example.hong.saying.DataBase.FeedDataCallback;
 import com.example.hong.saying.DataBase.FirebaseData;
 import com.example.hong.saying.DataModel.FeedModel;
 import com.example.hong.saying.Upload.UploadActivity;
+import com.google.firebase.auth.FacebookAuthProvider;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
 
 import java.util.ArrayList;
 

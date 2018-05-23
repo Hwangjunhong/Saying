@@ -22,6 +22,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.example.hong.saying.DataModel.FeedModel;
 import com.example.hong.saying.Util.LayoutToImage;
 import com.example.hong.saying.Util.LoadingProgress;
+import com.facebook.Profile;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -36,6 +37,7 @@ public class SayDetailActivity extends AppCompatActivity implements View.OnClick
     BottomSheetBehavior bottomSheetBehavior;
     CardView cardView;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +46,7 @@ public class SayDetailActivity extends AppCompatActivity implements View.OnClick
         getData();
         initView();
         setData();
+
 
     }
 
@@ -93,7 +96,7 @@ public class SayDetailActivity extends AppCompatActivity implements View.OnClick
                 .into(imageView);
 
         Glide.with(this).load(feedModel.getProfileUrl())
-                .apply(options.error(R.drawable.user))
+                .apply(options.error(R.drawable.user).placeholder(R.drawable.user))
                 .into(profileImage);
 
         userName.setText(feedModel.getUserName());

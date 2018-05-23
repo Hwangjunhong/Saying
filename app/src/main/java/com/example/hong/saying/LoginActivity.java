@@ -2,14 +2,19 @@ package com.example.hong.saying;
 
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.hong.saying.DataBase.DataCallback;
 import com.example.hong.saying.DataBase.FirebaseData;
 import com.example.hong.saying.DataModel.UserModel;
@@ -21,6 +26,7 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.Profile;
+import com.facebook.login.Login;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -29,23 +35,28 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
+
+import javax.microedition.khronos.opengles.GL;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener, FacebookCallback<LoginResult>, DataCallback {
 
     TextView logoText;
-    RelativeLayout kakaoLogin, facebookLogin;
+    RelativeLayout kakaoLogin, facebookLogin, emailLogin;
     SessionCallback sessionCallback;
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     CallbackManager callbackManager;
     LoginButton facebookBt;
     SharedPreference sharedPreference = new SharedPreference();
 
+    EditText editEmail, editPw;
+    TextView signUpBt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        sessionCallback = new SessionCallback(this);
         setContentView(R.layout.activity_login);
 
         callbackManager = CallbackManager.Factory.create();
@@ -75,15 +86,27 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void initView() {
         logoText = findViewById(R.id.logoText);
         kakaoLogin = findViewById(R.id.kakao);
+
         facebookLogin = findViewById(R.id.facebook);
         facebookBt = findViewById(R.id.login_button);
         facebookBt.setReadPermissions("email");
 
+        emailLogin = findViewById(R.id.email);
+
+
+        editEmail = findViewById(R.id.edit_email);
+        editPw = findViewById(R.id.edit_pw);
+        signUpBt = findViewById(R.id.sign_up_bt);
+
         Typeface typeface = Typeface.createFromAsset(getAssets(), "Walkway SemiBold.ttf");
         logoText.setTypeface(typeface);
+        emailLogin.setOnClickListener(this);
         kakaoLogin.setOnClickListener(this);
         facebookLogin.setOnClickListener(this);
         facebookBt.registerCallback(callbackManager, this);
+
+        signUpBt.setOnClickListener(this);
+
     }
 
     @Override
@@ -100,6 +123,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 } else {
                     facebookBt.performClick();
                 }
+                break;
+
+            case R.id.email:
+                Log.d("asdasdasd", "asdasd");
+                emailSignIn(editEmail.getText().toString(), editPw.getText().toString());
+
                 break;
         }
     }
@@ -275,19 +304,26 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
 
-                            String uid = mAuth.getCurrentUser().getUid();
                             FirebaseData firebaseData = new FirebaseData();
                             firebaseData.setDataCallback(LoginActivity.this);
+
+                            String uid = mAuth.getCurrentUser().getUid();
+
                             Profile profile = Profile.getCurrentProfile();
                             UserModel userModel = new UserModel();
                             userModel.setName(profile.getName());
                             userModel.setProfileUrl("https://graph.fackbook.com/" + profile.getId() + "/picture?type=large");
+
+
+                            Uri uri = Profile.getCurrentProfile().getProfilePictureUri(200, 200);
+
                             firebaseData.userDataUpload(uid, userModel);
+
 
                             SharedPreference sharedPreference = new SharedPreference();
                             sharedPreference.put(LoginActivity.this, "userName", userModel.getName());
                             sharedPreference.put(LoginActivity.this, "profileUrl", userModel.getProfileUrl());
-                            firebaseData.userDataUpload(uid, userModel);
+//                            firebaseData.userDataUpload(uid, userModel);
 
 
                         } else {
@@ -311,7 +347,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onError(FacebookException error) {
 
-        Log.d("zzzzz", error.toString() + ",");
     }
 
     @Override
@@ -329,4 +364,29 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             finish();
         }
     }
+
+
+    private void emailSignIn(String email, String password) {
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            FirebaseUser user = mAuth.getCurrentUser();
+
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            startActivity(intent);
+                            finish();
+
+                        } else {
+
+                        }
+
+                        // ...
+                    }
+                });
+
+    }
+
+
 }
