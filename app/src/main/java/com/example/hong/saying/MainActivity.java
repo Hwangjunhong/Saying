@@ -17,7 +17,6 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     BottomNavigationView bottomNavigationView;
     FragAdapter adapter;
     Menu btMenu;
-    Menu menu;
     Toolbar toolbar;
 
     @Override
@@ -37,7 +36,6 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         viewPager = findViewById(R.id.container);
         bottomNavigationView = findViewById(R.id.bt_nav);
         toolbar = findViewById(R.id.ToolBar);
-        setSupportActionBar(toolbar);
 
     }
 
@@ -63,14 +61,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     @Override
     public void onPageSelected(int position) {
         btMenu.getItem(position).setChecked(true);
-        menu = toolbar.getMenu();
-        MenuItem item = menu.findItem(R.id.setting_btn);
 
-        if(position == 2){
-            item.setVisible(true);
-        } else {
-            item.setVisible(false);
-        }
     }
 
     @Override
@@ -98,25 +89,6 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                 break;
         }
         return false;
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.setting_menu, menu);
-        menu.findItem(R.id.setting_btn).setVisible(false);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.setting_btn:
-                Intent intent = new Intent(this, AccountActivity.class);
-                startActivity(intent);
-                finish();
-                break;
-        }
-        return true;
     }
 
 }

@@ -11,6 +11,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -94,6 +95,7 @@ public class SayDetailActivity extends AppCompatActivity implements View.OnClick
         Glide.with(this).load(feedModel.getImageUrl())
                 .transition(GenericTransitionOptions.with(R.anim.alpha_anim))
                 .into(imageView);
+
 
         Glide.with(this).load(feedModel.getProfileUrl())
                 .apply(options.error(R.drawable.user).placeholder(R.drawable.user))
@@ -189,5 +191,6 @@ public class SayDetailActivity extends AppCompatActivity implements View.OnClick
         intent.setType("image/*");
         intent.putExtra(Intent.EXTRA_STREAM, uri);
         startActivity(intent.createChooser(intent, "Share Image"));
+
     }
 }

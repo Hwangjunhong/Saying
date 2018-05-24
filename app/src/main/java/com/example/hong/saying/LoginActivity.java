@@ -126,7 +126,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 break;
 
             case R.id.email:
-                Log.d("asdasdasd", "asdasd");
                 emailSignIn(editEmail.getText().toString(), editPw.getText().toString());
 
                 break;
@@ -312,11 +311,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             Profile profile = Profile.getCurrentProfile();
                             UserModel userModel = new UserModel();
                             userModel.setName(profile.getName());
-                            userModel.setProfileUrl("https://graph.fackbook.com/" + profile.getId() + "/picture?type=large");
-
-
-                            Uri uri = Profile.getCurrentProfile().getProfilePictureUri(200, 200);
-
+                            userModel.setProfileUrl(profile.getProfilePictureUri(300,300).toString());
                             firebaseData.userDataUpload(uid, userModel);
 
 
