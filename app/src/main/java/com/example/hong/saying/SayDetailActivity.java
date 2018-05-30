@@ -11,11 +11,15 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
+import android.text.Layout;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.GenericTransitionOptions;
 import com.bumptech.glide.Glide;
@@ -23,21 +27,27 @@ import com.bumptech.glide.request.RequestOptions;
 import com.example.hong.saying.DataModel.FeedModel;
 import com.example.hong.saying.Util.LayoutToImage;
 import com.example.hong.saying.Util.LoadingProgress;
-import com.facebook.Profile;
+import com.volokh.danylo.hashtaghelper.HashTagHelper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class SayDetailActivity extends AppCompatActivity implements View.OnClickListener, LayoutToImage.SaveImageCallback {
 
     FeedModel feedModel;
-    ImageView imageView, backBt, shareBt, openCloseArrow, shadow;
+    ImageView imageView, shareBt, openCloseArrow, shadow, likeBt, scrapBt;
     CircleImageView profileImage;
-    TextView userName, say;
-    RelativeLayout openClose, bottomSheet;
+    TextView userName, say, text_hashTag;
+    RelativeLayout openClose, bottomSheet, backBt;
     RequestOptions options = new RequestOptions();
     BottomSheetBehavior bottomSheetBehavior;
     CardView cardView;
 
+    ArrayList<String> hashTag = new ArrayList<>();
+
+    private HashTagHelper mTextHashTagHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +57,7 @@ public class SayDetailActivity extends AppCompatActivity implements View.OnClick
         getData();
         initView();
         setData();
-
+        HashTagClicked();
 
     }
 
@@ -63,6 +73,9 @@ public class SayDetailActivity extends AppCompatActivity implements View.OnClick
         shadow = findViewById(R.id.shadow);
         say = findViewById(R.id.say);
         cardView = findViewById(R.id.card_view);
+        likeBt = findViewById(R.id.like_bt);
+        scrapBt = findViewById(R.id.scrap_bt);
+        text_hashTag = findViewById(R.id.text_hashTag);
 
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
         bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
@@ -85,6 +98,8 @@ public class SayDetailActivity extends AppCompatActivity implements View.OnClick
         backBt.setOnClickListener(this);
         openClose.setOnClickListener(this);
         shareBt.setOnClickListener(this);
+        likeBt.setOnClickListener(this);
+        scrapBt.setOnClickListener(this);
     }
 
     private void getData() {
@@ -105,6 +120,7 @@ public class SayDetailActivity extends AppCompatActivity implements View.OnClick
         say.setText(feedModel.getContents());
         say.setTextColor(Color.parseColor("#" + feedModel.getTextColor()));
         say.setGravity(feedModel.getGravity());
+        text_hashTag.setText(feedModel.getHashTag());
 
 
     }
@@ -128,9 +144,15 @@ public class SayDetailActivity extends AppCompatActivity implements View.OnClick
                 break;
 
             case R.id.share_bt:
-                if(checkPermassion()){
+                if (checkPermassion()) {
                     makeImageCard();
                 }
+                break;
+
+            case R.id.like_bt:
+
+                break;
+            case R.id.scrap_bt:
                 break;
         }
     }
@@ -169,8 +191,8 @@ public class SayDetailActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
-    private boolean checkPermassion(){
-        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+    private boolean checkPermassion() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 200);
             return false;
         } else {
@@ -181,16 +203,115 @@ public class SayDetailActivity extends AppCompatActivity implements View.OnClick
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED){
+        if (grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
             makeImageCard();
         }
     }
 
-    private void shareIamge(Uri uri){
+    private void shareIamge(Uri uri) {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("image/*");
         intent.putExtra(Intent.EXTRA_STREAM, uri);
         startActivity(intent.createChooser(intent, "Share Image"));
 
     }
+
+
+    private void HashTagClicked() {
+        mTextHashTagHelper = HashTagHelper.Creator.create(getResources().getColor(R.color.colorPrimary), new HashTagHelper.OnHashTagClickListener() {
+            @Override
+            public void onHashTagClicked(String hashTag) {
+
+
+                hashTag = text_hashTag.getText().toString();
+//                chooseWord(hashTag.length() + 1);
+
+                Toast.makeText(SayDetailActivity.this, hashTag, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        mTextHashTagHelper.handle(text_hashTag);
+    }
+
+
+//    public String chooseWord(int offset) {
+//        String strWord = "";
+//
+//        for (int i = offset - 1; ; i--) {     //선택한 글자(알파벳하나)가 포함된 단어의 앞부분 받아오기
+//            String a = String.valueOf(text_hashTag.getText().charAt(i)-1);
+//
+//            if (!a.equals(" ") && !a.equals(",") && !a.equals("]") && !a.equals(")") && !a.equals("`") && !a.equals("?") && !a.equals(".") && !a.equals("/") && !a.equals(";") && !a.equals(":")) {
+//                strWord = a + strWord;
+//                Log.d("offset", "offset " + offset);
+//                Log.d("offset", "word " + strWord);
+//            } else
+//                break;
+//        }
+//
+//        for (int i = offset; ; i++) {   //선택한 글자(알파벳하나)가 포함된 단어의 뒷부분 받아오기
+//
+//            String a = String.valueOf(text_hashTag.getText().charAt(i)-1);
+//
+//            if (!a.equals(" ") && !a.equals(",") && !a.equals("]") && !a.equals(")") && !a.equals("`") && !a.equals("?") && !a.equals(".") && !a.equals("/") && !a.equals(";") && !a.equals(":")) {
+//                strWord = strWord + a;
+//                Log.d("offset", "offset " + offset);
+//                Log.d("offset", "word " + strWord);
+//            } else
+//                break;
+//        }
+//        return strWord;
+//
+//
+//    }
+//
+//
+//    public int getIndex(TextView view, MotionEvent event) {
+//
+//        int x = (int) event.getX();
+//        int y = (int) event.getY();
+//        x -= view.getTotalPaddingLeft();
+//        y -= view.getTotalPaddingTop();
+//        x += view.getScrollX();
+//        y += view.getScrollY();
+//        Layout layout = view.getLayout();
+//        int line = layout.getLineForVertical(y);
+//        int offset = layout.getOffsetForHorizontal(line, x);
+//        Toast.makeText(this, "line:" + line + ",index:" + offset, Toast.LENGTH_LONG).show();
+//        return offset;
+//
+//    }
+//
+//    GestureDetector.OnGestureListener mTouchListener = new GestureDetector.OnGestureListener() {
+//
+//        public boolean onDown(MotionEvent event) {
+//            return false;
+//        }
+//
+//        public void onShowPress(MotionEvent event) {
+//            int offset = getIndex(text_hashTag, event);
+//
+//        }
+//
+//        @Override
+//        public boolean onSingleTapUp(MotionEvent e) {
+//            return false;
+//        }
+//
+//        @Override
+//        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+//            return false;
+//        }
+//
+//        @Override
+//        public void onLongPress(MotionEvent e) {
+//
+//        }
+//
+//        @Override
+//        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+//            return false;
+//        }
+//    };
+
+
 }

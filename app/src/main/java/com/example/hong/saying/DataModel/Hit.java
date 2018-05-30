@@ -1,5 +1,5 @@
 
-package com.example.hong.saying.Util;
+package com.example.hong.saying.DataModel;
 
 public class Hit {
 

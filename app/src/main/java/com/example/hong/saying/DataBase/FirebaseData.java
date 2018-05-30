@@ -70,6 +70,11 @@ public class FirebaseData implements OnCompleteListener<Void>, ChildEventListene
         reference.orderByChild("userKey").equalTo(userKey).addChildEventListener(this);
     }
 
+//    public void getHashTagData(String hashTag){
+//        reference = database.getReference("feed");
+//        reference.orderByChild("hashTag").equalTo(hashTag).addChildEventListener(this);
+//    }
+
 
     @Override
     public void onCancelled(DatabaseError databaseError) {

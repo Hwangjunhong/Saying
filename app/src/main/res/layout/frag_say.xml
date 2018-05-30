@@ -6,10 +6,24 @@
     android:background="@android:color/white"
     android:transitionName="plus">
 
+    <include
+        android:id="@+id/sayToolBar"
+        layout="@layout/toolbar_say"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize" />
+
+    <View
+        android:id="@+id/line"
+        android:layout_width="match_parent"
+        android:layout_height="0.1dp"
+        android:layout_above="@+id/refresh_layout"
+        android:background="#90909090" />
+
     <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/refresh_layout">
+        android:layout_below="@+id/sayToolBar">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler"

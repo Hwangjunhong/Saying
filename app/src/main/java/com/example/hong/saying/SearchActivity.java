@@ -18,7 +18,7 @@ import android.widget.Toast;
 
 import com.example.hong.saying.Util.ApiService;
 import com.example.hong.saying.Util.GridSpacingItemDecoration;
-import com.example.hong.saying.Util.Hit;
+import com.example.hong.saying.DataModel.Hit;
 import com.example.hong.saying.Util.PaginationScrollListener;
 import com.example.hong.saying.Util.PixabayImage;
 import com.example.hong.saying.Util.RetrofitCall;
@@ -32,18 +32,18 @@ import retrofit2.Response;
 
 public class SearchActivity extends AppCompatActivity implements Callback<PixabayImage>, View.OnClickListener, TextWatcher, TextView.OnEditorActionListener {
 
-    RelativeLayout backBt, resetBt;
-    EditText searchEdit;
-    RecyclerView recyclerView;
-    SearchAdapter adapter;
-    List<Hit> images = new ArrayList<>();
-    int maxPageCount = 0;
-    int currentPage = 1;
-    boolean isLoading = false;
-    String keyword;
+    private RelativeLayout backBt, resetBt;
+    private EditText searchEdit;
+    private RecyclerView recyclerView;
+    private SearchAdapter adapter;
+    private List<Hit> images = new ArrayList<>();
+    private int maxPageCount = 0;
+    private int currentPage = 1;
+    private boolean isLoading = false;
+    private String keyword;
 
-    Call<PixabayImage> getFirstImage;
-    Call<PixabayImage> getMoreImage;
+    private Call<PixabayImage> getFirstImage;
+    private Call<PixabayImage> getMoreImage;
 
 
     @Override
@@ -70,7 +70,7 @@ public class SearchActivity extends AppCompatActivity implements Callback<Pixaba
     }
 
     private void setRecyclerView() {
-        adapter = new SearchAdapter(images, this);
+        adapter = new SearchAdapter(this);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
         recyclerView.setLayoutManager(gridLayoutManager);
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(3, 1, false));
@@ -79,9 +79,9 @@ public class SearchActivity extends AppCompatActivity implements Callback<Pixaba
         recyclerView.addOnScrollListener(new PaginationScrollListener(gridLayoutManager) {
             @Override
             protected void loadMoreItems() {
-                    isLoading = true;
-                    currentPage++;
-                    getPixabayMoreImage(keyword, currentPage);
+                isLoading = true;
+                currentPage++;
+                getPixabayMoreImage(keyword, currentPage);
             }
 
             @Override
@@ -108,7 +108,7 @@ public class SearchActivity extends AppCompatActivity implements Callback<Pixaba
                 .getRandomImage(ApiService.APP_KEY, keyword, "popular", "photo");
 
         getFirstImage.enqueue(this);
-
+        isLoading = true;
     }
 
     private void getPixabayMoreImage(String keyword, int currentPage) {
@@ -125,20 +125,18 @@ public class SearchActivity extends AppCompatActivity implements Callback<Pixaba
     public void onResponse(Call<PixabayImage> call, Response<PixabayImage> response) {
         if (response.isSuccessful()) {
             PixabayImage pixabayImage = response.body();
-                if (pixabayImage.getHits() != null && pixabayImage.getHits().size() > 0) {
-                    maxPageCount = pixabayImage.getTotalHits() / pixabayImage.getHits().size();
-                } else {
-                    Toast.makeText(this, "검색 결과가 없습니다.", Toast.LENGTH_SHORT).show();
-                }
+            if (pixabayImage.getHits() != null && pixabayImage.getHits().size() > 0) {
+                maxPageCount = pixabayImage.getTotalHits() / pixabayImage.getHits().size();
+            } else {
+                Toast.makeText(this, "검색 결과가 없습니다.", Toast.LENGTH_SHORT).show();
+            }
 
             isLoading = false;
             if (maxPageCount == 0) {
                 maxPageCount = 1;
             }
 
-            if (pixabayImage != null) {
-                notifyImage(pixabayImage);
-            }
+            notifyImage(pixabayImage);
         }
     }
 
@@ -152,8 +150,7 @@ public class SearchActivity extends AppCompatActivity implements Callback<Pixaba
             images.clear();
         }
         images.addAll(image.getHits());
-        adapter.notifyItemRangeChanged(0, images.size());
-
+        adapter.resetAll(images);
     }
 
     @Override
@@ -193,6 +190,7 @@ public class SearchActivity extends AppCompatActivity implements Callback<Pixaba
     @SuppressLint("ServiceCast")
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+
         switch (actionId) {
             case EditorInfo.IME_ACTION_SEARCH:
                 keyword = searchEdit.getText().toString().trim();

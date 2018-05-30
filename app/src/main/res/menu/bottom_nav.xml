@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:id="@+id/bt_nav_say"
-        android:icon="@drawable/quill"
+        android:icon="@drawable/post"
         android:title="좋은 글" />
 
     <item android:id="@+id/bt_nav_search"
@@ -10,7 +10,7 @@
         android:title="검색"/>
 
     <item android:id="@+id/bt_nav_account"
-        android:icon="@drawable/user"
+        android:icon="@drawable/account"
         android:title="내 계정"/>
 
 

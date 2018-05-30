@@ -37,6 +37,7 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
+import com.google.firebase.database.Query;
 
 import javax.microedition.khronos.opengles.GL;
 
@@ -92,8 +93,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         facebookBt.setReadPermissions("email");
 
         emailLogin = findViewById(R.id.email);
-
-
         editEmail = findViewById(R.id.edit_email);
         editPw = findViewById(R.id.edit_pw);
         signUpBt = findViewById(R.id.sign_up_bt);
@@ -116,7 +115,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 //                kakaoLogin();
                 break;
             case R.id.facebook:
-                LoadingProgress.showDialog(this, true);
+//                LoadingProgress.showDialog(this, true);
                 AccessToken accessToken = AccessToken.getCurrentAccessToken();
                 if (accessToken != null) {
                     handleFacebookAccessToken(accessToken);
@@ -126,8 +125,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 break;
 
             case R.id.email:
+                LoadingProgress.showDialog(this, true);
                 emailSignIn(editEmail.getText().toString(), editPw.getText().toString());
 
+                break;
+
+            case R.id.sign_up_bt:
+                LoadingProgress.showDialog(this, true);
+                Intent intent = new Intent(this, SignUpActivity.class);
+                startActivity(intent);
+                finish();
                 break;
         }
     }
@@ -361,13 +368,28 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
 
+
+
+
+
     private void emailSignIn(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            FirebaseUser user = mAuth.getCurrentUser();
+
+
+                            UserModel userModel = new UserModel();
+                            SharedPreference sharedPreference = new SharedPreference();
+                            sharedPreference.put(LoginActivity.this, "name", userModel.getName());
+
+                            FirebaseData firebaseData = new FirebaseData();
+//                            firebaseData.setDataCallback(LoginActivity.this);
+
+                            String uid = mAuth.getCurrentUser().getUid();
+                            userModel.setName(userModel.getName());
+                            firebaseData.userDataUpload(uid, userModel);
 
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(intent);

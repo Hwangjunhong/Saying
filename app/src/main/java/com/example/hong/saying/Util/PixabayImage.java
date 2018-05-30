@@ -1,6 +1,8 @@
 
 package com.example.hong.saying.Util;
 
+import com.example.hong.saying.DataModel.Hit;
+
 import java.util.List;
 
 public class PixabayImage {

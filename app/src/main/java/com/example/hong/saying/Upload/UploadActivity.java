@@ -30,6 +30,7 @@ import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.transition.Transition;
@@ -47,13 +48,14 @@ import com.example.hong.saying.Upload.SettingPackage.GravityFragment;
 import com.example.hong.saying.Upload.SettingPackage.ImageFragment;
 import com.example.hong.saying.Util.ApiService;
 import com.example.hong.saying.Util.ColorPicker;
-import com.example.hong.saying.Util.Hit;
+import com.example.hong.saying.DataModel.Hit;
 import com.example.hong.saying.Util.LoadingProgress;
 import com.example.hong.saying.Util.PixabayImage;
 import com.example.hong.saying.Util.RealPathUtil;
 import com.example.hong.saying.Util.RetrofitCall;
 import com.example.hong.saying.Util.SharedPreference;
 import com.google.firebase.auth.FirebaseAuth;
+import com.volokh.danylo.hashtaghelper.HashTagHelper;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -66,34 +68,36 @@ import retrofit2.Response;
 
 public class UploadActivity extends AppCompatActivity implements View.OnClickListener, ColorCallback, ButtonClick, Callback<PixabayImage>, RequestListener<Bitmap>, DataCallback, FileCallback {
 
-    ColorPickerFragment pickerFragment = new ColorPickerFragment();
-    ImageFragment imageFragment = new ImageFragment();
-    GravityFragment gravityFragment = new GravityFragment();
+    private HashTagHelper mTextHashTagHelper;
 
-    FrameLayout textColor, searchImage, textLocation;
-    LinearLayout bottomSheet;
-    RelativeLayout backBtn;
+    private ColorPickerFragment pickerFragment = new ColorPickerFragment();
+    private ImageFragment imageFragment = new ImageFragment();
+    private GravityFragment gravityFragment = new GravityFragment();
 
-    TextView complete;
-    ImageView image;
-    EditText write;
+    private FrameLayout textColor, searchImage, textLocation;
+    private LinearLayout bottomSheet;
+    private RelativeLayout backBtn;
 
-    FragmentManager fragmentManager;
-    BottomSheetBehavior behavior;
+    private TextView complete;
+    private ImageView image;
+    private EditText write, edit_hashTag;
 
-    int firstGravity = Gravity.CENTER;
-    int secondGravity = Gravity.CENTER;
-    int firstColor = Color.WHITE;
-    int secondColor;
-    boolean isOpen = false;
-    boolean isGallery = false;
-    String[] keywordArr;
-    List<Hit> hitList = new ArrayList<>();
-    int position = 0;
-    String galleryUri;
-    String imageUrl;
+    private FragmentManager fragmentManager;
+    private BottomSheetBehavior behavior;
 
-    File pixabayFile;
+    private int firstGravity = Gravity.CENTER;
+    private int secondGravity = Gravity.CENTER;
+    private int firstColor = Color.WHITE;
+    private int secondColor;
+    private boolean isOpen = false;
+    private boolean isGallery = false;
+    private String[] keywordArr;
+    private List<Hit> hitList = new ArrayList<>();
+    private int position = 0;
+    private String galleryUri;
+    private String imageUrl;
+
+    private File pixabayFile;
 
     RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
@@ -125,6 +129,10 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
         complete = findViewById(R.id.complete);
         image = findViewById(R.id.image);
         write = findViewById(R.id.write);
+        edit_hashTag = findViewById(R.id.edit_hashTag);
+        mTextHashTagHelper = HashTagHelper.Creator.create(getResources().getColor(R.color.colorPrimary), null);
+        mTextHashTagHelper.handle(edit_hashTag);
+
 
         textColor.setOnClickListener(this);
         searchImage.setOnClickListener(this);
@@ -171,8 +179,12 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                 finish();
                 break;
             case R.id.complete:
-                LoadingProgress.showDialog(this, true);
-                uploadFile();
+                if (pixabayFile == null) {
+                    Toast.makeText(this, "이미지가 로딩중 입니다. \n잠시만 기다려주세요.", Toast.LENGTH_LONG).show();
+                } else {
+                    LoadingProgress.showDialog(this, true);
+                    uploadFile();
+                }
                 break;
 
         }
@@ -187,7 +199,7 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
 
 
         String color = Integer.toHexString(firstColor);
-        FeedModel feedModel = new FeedModel(imageUrl, userName, profileUrl, firstGravity, color, write.getText().toString(), System.currentTimeMillis(), userKey);
+        FeedModel feedModel = new FeedModel(imageUrl, userName, profileUrl, firstGravity, color, write.getText().toString(), System.currentTimeMillis(), userKey, edit_hashTag.getText().toString());
         FirebaseData firebaseData = new FirebaseData();
         firebaseData.setDataCallback(this);
         firebaseData.FeedDataUpload(feedModel);
@@ -279,6 +291,7 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
             case Gravity.CENTER:
                 layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+                layoutParams.addRule(RelativeLayout.TEXT_ALIGNMENT_CENTER);
                 write.setGravity(gravity);
                 write.setLayoutParams(layoutParams);
                 break;
@@ -366,9 +379,12 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
             RequestManager requestManager = Glide.with(this);
 
             if (!isUri) {
-                requestManager.asBitmap().load(path)
+                requestManager.asBitmap().load(path).apply(new RequestOptions().override(400, 300))
                         .thumbnail(0.1f).listener(this).transition(GenericTransitionOptions.with(R.anim.alpha_anim)).into(image);
+
                 getPixabayFile(path);
+
+
             } else {
                 requestManager.asBitmap().load(uri)
                         .thumbnail(0.1f).listener(this).transition(GenericTransitionOptions.with(R.anim.alpha_anim)).into(image);
@@ -400,6 +416,7 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                             .thumbnail(0.1f)
                             .listener(this).transition(GenericTransitionOptions.with(R.anim.alpha_anim))
                             .into(image);
+
 
                     getPixabayFile(path);
 
@@ -453,7 +470,7 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public void completeFileUpload(String url) {
         if (!TextUtils.isEmpty(url)) {
-//            imageUrl = url;
+            imageUrl = url;
             uploadData();
         } else {
             Toast.makeText(this, "데이터 업로드 실패", Toast.LENGTH_SHORT).show();

@@ -10,9 +10,10 @@ import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
-import com.example.hong.saying.Util.Hit;
+import com.example.hong.saying.DataModel.Hit;
 import com.example.hong.saying.Util.SquareImageView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,12 +21,11 @@ import java.util.List;
  */
 
 public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder> {
-    List<Hit> images;
+    List<Hit> items = new ArrayList<>();
     Context context;
     RequestManager requestManager;
 
-    public SearchAdapter(List<Hit> images, Context context) {
-        this.images = images;
+    public SearchAdapter(Context context) {
         this.context = context;
         requestManager = Glide.with(context);
     }
@@ -39,13 +39,22 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        requestManager.load(images.get(position).getPreviewURL()).into(holder.imageView);
+        requestManager.load(items.get(position).getPreviewURL()).into(holder.imageView);
         holder.view.setTag(position);
     }
 
     @Override
     public int getItemCount() {
-        return images.size();
+        return items.size();
+    }
+
+
+    public void resetAll(List<Hit> items){
+        if(items == null){
+            return;
+        }
+        this.items = items;
+        notifyDataSetChanged();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -66,7 +75,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
             int position = (int) view.getTag();
             if (context instanceof SearchActivity) {
                 Intent intent = new Intent();
-                intent.putExtra("path", images.get(position).getWebformatURL());
+                intent.putExtra("path", items.get(position).getWebformatURL());
                 ((SearchActivity) context).setResult(100, intent);
                 ((SearchActivity) context).finish();
             }

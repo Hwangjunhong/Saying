@@ -50,7 +50,7 @@
         <activity android:name=".Upload.UploadActivity" />
         <activity android:name=".SearchActivity" />
         <activity android:name=".LoginActivity" />
-        <activity android:name=".AccountActivity" />
+        <activity android:name=".AccountPackage.AccountActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".SayDetailActivity" />
         <activity android:name=".SignUpActivity"></activity>

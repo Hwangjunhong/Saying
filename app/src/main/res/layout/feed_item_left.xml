@@ -35,6 +35,7 @@
                 android:textSize="12dp"
                 tools:text="인생뭐있나" />
 
+
         </RelativeLayout>
 
         <LinearLayout

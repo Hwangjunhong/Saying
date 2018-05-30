@@ -4,11 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,11 +15,7 @@ import android.widget.TextView;
 import com.bumptech.glide.GenericTransitionOptions;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.Target;
 import com.example.hong.saying.DataModel.FeedModel;
 
 import java.util.ArrayList;
@@ -35,16 +28,17 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
-    Context context;
-    ArrayList<FeedModel> feedModels = new ArrayList<>();
-    FeedModel item;
-    RequestManager requestManager;
-    static final int VIEW_LEFT = 0;
-    static final int VIEW_RIGHT = 1;
+    private Context context;
+    private ArrayList<FeedModel> feedModels = new ArrayList<>();
+    private FeedModel item;
+    private RequestManager requestManager;
+    private static final int VIEW_LEFT = 0;
+    private static final int VIEW_RIGHT = 1;
 
-    RequestOptions options = new RequestOptions();
+    private RequestOptions options = new RequestOptions();
 
-    Typeface typeface;
+    private Typeface typeface;
+
 
     public FeedAdapter(Context context, ArrayList<FeedModel> feedModels) {
         this.context = context;
@@ -77,6 +71,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         holder.userName.setText(item.getUserName());
         holder.itemView.setTag(position);
 
+
     }
 
     @Override
@@ -93,6 +88,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
     public int getItemCount() {
         return feedModels.size();
     }
+
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView feedImage;
@@ -111,6 +107,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             userName = itemView.findViewById(R.id.user_name);
             userName.setTypeface(typeface);
             contents.setTypeface(typeface);
+
             setOnClick();
 
         }
@@ -120,6 +117,9 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         }
 
         @Override
+
+
+
         public void onClick(View v) {
             int position = (int) itemView.getTag();
             FeedModel model = feedModels.get(position);
@@ -131,6 +131,11 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             context.startActivity(intent);
 
 
+
         }
+
     }
+
+
+
 }
