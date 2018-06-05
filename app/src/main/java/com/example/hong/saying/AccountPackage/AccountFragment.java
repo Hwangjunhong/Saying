@@ -31,21 +31,21 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class AccountFragment extends Fragment implements FeedDataCallback, View.OnClickListener {
 
-    FirebaseData firebaseData = new FirebaseData();
-    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-    FirebaseUser user = firebaseAuth.getCurrentUser();
-    String uid = user.getUid();
+    private FirebaseData firebaseData = new FirebaseData();
+    private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    private FirebaseUser user = firebaseAuth.getCurrentUser();
+    private String uid = user.getUid();
 
-    RelativeLayout settingBt;
-    ViewPager viewPager;
-    TabLayout tabLayout;
-    CircleImageView profileImage;
-    TextView userName;
-    SharedPreference sharedPreference = new SharedPreference();
-    String myProfileUrl, myName;
-    FragAdapter fragAdapter;
-    MyPostFragment myPostFragment = new MyPostFragment();
-    ScrapFragment scrapFragment = new ScrapFragment();
+    private RelativeLayout settingBt;
+    private ViewPager viewPager;
+    private TabLayout tabLayout;
+    private CircleImageView profileImage;
+    private TextView userName;
+    private SharedPreference sharedPreference = new SharedPreference();
+    private String myProfileUrl, myName;
+    private FragAdapter fragAdapter;
+    private MyPostFragment myPostFragment = new MyPostFragment();
+    private ScrapFragment scrapFragment = new ScrapFragment();
 
     @Nullable
     @Override
@@ -62,7 +62,7 @@ public class AccountFragment extends Fragment implements FeedDataCallback, View.
         return view;
     }
 
-    private void initView(View view){
+    private void initView(View view) {
         viewPager = view.findViewById(R.id.view_pager);
         tabLayout = view.findViewById(R.id.tab_layout);
         profileImage = view.findViewById(R.id.profile_image);
@@ -76,7 +76,7 @@ public class AccountFragment extends Fragment implements FeedDataCallback, View.
 
     }
 
-    private void setViewPager(){
+    private void setViewPager() {
         fragAdapter = new FragAdapter(getChildFragmentManager());
         fragAdapter.addFragment(scrapFragment);
         fragAdapter.addFragment(myPostFragment);
@@ -86,29 +86,30 @@ public class AccountFragment extends Fragment implements FeedDataCallback, View.
         tabLayout.setupWithViewPager(viewPager);
     }
 
-    private void getMyInfo(){
+    private void getMyInfo() {
         myName = sharedPreference.getValue(getActivity(), "userName", "");
         myProfileUrl = sharedPreference.getValue(getActivity(), "profileUrl", "");
 
     }
 
-    private void getMyFeedData(){
+    private void getMyFeedData() {
         firebaseData.setFeedDataCallback(this);
         firebaseData.getMyFeedData(uid);
 
     }
 
     @Override
-    public void getFeedData(FeedModel feedModel) {
+    public void getFeedData(FeedModel feedModel, String key) {
         myPostFragment.addFeedModel(feedModel);
 
     }
 
     @Override
     public void onClick(View v) {
-        if(v.getId() == R.id.setting_bt){
+        if (v.getId() == R.id.setting_bt) {
             Intent intent = new Intent(getContext(), AccountActivity.class);
             startActivity(intent);
+//            getActivity().finish();
         }
     }
 

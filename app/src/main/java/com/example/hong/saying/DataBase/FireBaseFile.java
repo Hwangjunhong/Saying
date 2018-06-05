@@ -30,8 +30,6 @@ public class FireBaseFile implements OnCompleteListener<UploadTask.TaskSnapshot>
         storageReference = storage.getReference("feedImage/" + System.currentTimeMillis() + uri.getLastPathSegment());
         storageReference.putFile(uri).addOnCompleteListener(this);
 
-
-
     }
 
     @Override

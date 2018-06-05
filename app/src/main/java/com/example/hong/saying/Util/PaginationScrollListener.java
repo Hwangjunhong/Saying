@@ -3,12 +3,14 @@ package com.example.hong.saying.Util;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.text.Layout;
 
 public abstract class PaginationScrollListener extends RecyclerView.OnScrollListener {
 
-    GridLayoutManager layoutManager;
+    RecyclerView.LayoutManager layoutManager;
 
-    public PaginationScrollListener(GridLayoutManager layoutManager) {
+    public PaginationScrollListener(RecyclerView.LayoutManager layoutManager) {
         this.layoutManager = layoutManager;
     }
 
@@ -18,7 +20,13 @@ public abstract class PaginationScrollListener extends RecyclerView.OnScrollList
 
         int visibleItemCount = layoutManager.getChildCount();
         int totalItemCount = layoutManager.getItemCount();
-        int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+        int firstVisibleItemPosition = 0;
+
+        if (layoutManager instanceof GridLayoutManager) {
+            firstVisibleItemPosition = ((GridLayoutManager) layoutManager).findFirstVisibleItemPosition();
+        } else if (layoutManager instanceof LinearLayoutManager) {
+            firstVisibleItemPosition = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
+        }
 
         if (!isLoading() && !isLastPage()) {
             if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount

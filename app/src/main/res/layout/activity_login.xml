@@ -24,21 +24,31 @@
         android:layout_weight="1.8"
         android:orientation="vertical">
 
-        <EditText
+        <com.rengwuxian.materialedittext.MaterialEditText
             android:id="@+id/edit_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="60dp"
             android:layout_marginStart="60dp"
-            android:hint="Email" />
+            android:hint="Email"
+            app:met_floatingLabel="normal"
+            app:met_floatingLabelPadding="2sp"
+            app:met_floatingLabelText="Email"
+            app:met_iconLeft="@drawable/email"
+            app:met_iconPadding="0dp"/>
 
-        <EditText
+        <com.rengwuxian.materialedittext.MaterialEditText
             android:id="@+id/edit_pw"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="60dp"
             android:layout_marginStart="60dp"
+            app:met_floatingLabel="normal"
+            app:met_floatingLabelPadding="2sp"
+            app:met_floatingLabelText="Password"
             android:hint="Password"
+            app:met_iconLeft="@drawable/lock"
+            app:met_iconPadding="0dp"
             />
 
         <RelativeLayout

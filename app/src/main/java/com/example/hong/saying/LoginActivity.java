@@ -36,6 +36,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.ProviderQueryResult;
 import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.Query;
 
@@ -126,7 +127,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             case R.id.email:
                 LoadingProgress.showDialog(this, true);
-                emailSignIn(editEmail.getText().toString(), editPw.getText().toString());
+                performLoginOrAccountCreation(editEmail.getText().toString(), editPw.getText().toString());
+//                emailSignIn(editEmail.getText().toString(), editPw.getText().toString());
 
                 break;
 
@@ -318,7 +320,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             Profile profile = Profile.getCurrentProfile();
                             UserModel userModel = new UserModel();
                             userModel.setName(profile.getName());
-                            userModel.setProfileUrl(profile.getProfilePictureUri(300,300).toString());
+                            userModel.setProfileUrl(profile.getProfilePictureUri(300, 300).toString());
                             firebaseData.userDataUpload(uid, userModel);
 
 
@@ -368,10 +370,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
 
-
-
-
-
     private void emailSignIn(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -379,17 +377,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
 
-
-                            UserModel userModel = new UserModel();
-                            SharedPreference sharedPreference = new SharedPreference();
-                            sharedPreference.put(LoginActivity.this, "name", userModel.getName());
-
-                            FirebaseData firebaseData = new FirebaseData();
-//                            firebaseData.setDataCallback(LoginActivity.this);
-
-                            String uid = mAuth.getCurrentUser().getUid();
-                            userModel.setName(userModel.getName());
-                            firebaseData.userDataUpload(uid, userModel);
+//                            UserModel userModel = new UserModel();
+//                            SharedPreference sharedPreference = new SharedPreference();
+//                            sharedPreference.put(LoginActivity.this, "name", userModel.getName());
+//
+//                            FirebaseData firebaseData = new FirebaseData();
+//
+//                            String uid = mAuth.getCurrentUser().getUid();
+//                            userModel.setName(userModel.getName());
+//                            firebaseData.userDataUpload(uid, userModel);
 
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(intent);
@@ -403,6 +399,34 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     }
                 });
 
+    }
+
+    private void performLoginOrAccountCreation(final String email, final String password) {
+        mAuth.fetchProvidersForEmail(email).addOnCompleteListener(
+                this, new OnCompleteListener<ProviderQueryResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<ProviderQueryResult> task) {
+                        if (task.isSuccessful()) {
+                            Log.d("Tag", "checking to see if user exists in firebase or not");
+                            ProviderQueryResult result = task.getResult();
+
+                            if (result != null && result.getProviders() != null
+                                    && result.getProviders().size() > 0) {
+
+                                emailSignIn(email, password);
+
+                            } else {
+                                LoadingProgress.dismissDialog();
+                                Toast.makeText(LoginActivity.this, "아이디가 존재하지 않습니다.", Toast.LENGTH_SHORT).show();
+
+                            }
+                        } else {
+                            LoadingProgress.dismissDialog();
+                            Toast.makeText(LoginActivity.this, "아이디가 존재하지 않습니다.", Toast.LENGTH_SHORT).show();
+
+                        }
+                    }
+                });
     }
 
 

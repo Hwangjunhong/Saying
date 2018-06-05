@@ -42,15 +42,11 @@ dependencies {
     compile 'io.jsonwebtoken:jjwt:0.9.0'
     implementation 'com.facebook.android:facebook-login:[4,5)'
     compile 'com.github.danylovolokh:hashtag-helper:1.1.0'
+    compile 'com.github.dmytrodanylyk.android-process-button:library:1.0.4'
+    compile 'com.ToxicBakery.viewpager.transforms:view-pager-transforms:1.2.32@aar'
+    compile 'com.rengwuxian.materialedittext:library:2.1.4'
 
 }
-
-
-
-
-
-
-
 
 
 

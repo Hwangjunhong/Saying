@@ -70,11 +70,6 @@ public class FirebaseData implements OnCompleteListener<Void>, ChildEventListene
         reference.orderByChild("userKey").equalTo(userKey).addChildEventListener(this);
     }
 
-//    public void getHashTagData(String hashTag){
-//        reference = database.getReference("feed");
-//        reference.orderByChild("hashTag").equalTo(hashTag).addChildEventListener(this);
-//    }
-
 
     @Override
     public void onCancelled(DatabaseError databaseError) {
@@ -85,7 +80,7 @@ public class FirebaseData implements OnCompleteListener<Void>, ChildEventListene
     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
         FeedModel feedModel = dataSnapshot.getValue(FeedModel.class);
         if (feedDataCallback != null) {
-            feedDataCallback.getFeedData(feedModel);
+            feedDataCallback.getFeedData(feedModel, dataSnapshot.getKey());
         }
     }
 

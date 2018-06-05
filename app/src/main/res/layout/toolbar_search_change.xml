@@ -15,24 +15,24 @@
             android:layout_height="match_parent">
 
             <RelativeLayout
-                android:id="@+id/back_bt"
+                android:id="@+id/searchBackground"
                 android:layout_width="?attr/actionBarSize"
                 android:layout_height="match_parent">
 
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
                     android:layout_centerInParent="true"
-                    android:src="@drawable/back" />
+                    android:src="@android:drawable/ic_search_category_default"/>
 
             </RelativeLayout>
 
             <EditText
-                android:id="@+id/search_hash_edit"
+                android:id="@+id/edit_search"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
-                android:layout_toRightOf="@+id/back_bt"
+                android:layout_toRightOf="@+id/searchBackground"
                 android:background="@null"
                 android:hint="검색"
                 android:imeOptions="actionSearch"

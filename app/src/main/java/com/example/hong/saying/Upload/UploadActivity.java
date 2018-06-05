@@ -39,6 +39,7 @@ import com.example.hong.saying.DataBase.FileCallback;
 import com.example.hong.saying.DataBase.FireBaseFile;
 import com.example.hong.saying.DataBase.FirebaseData;
 import com.example.hong.saying.DataModel.FeedModel;
+import com.example.hong.saying.DataModel.Hit;
 import com.example.hong.saying.R;
 import com.example.hong.saying.SearchActivity;
 import com.example.hong.saying.Upload.SettingPackage.ButtonClick;
@@ -48,14 +49,14 @@ import com.example.hong.saying.Upload.SettingPackage.GravityFragment;
 import com.example.hong.saying.Upload.SettingPackage.ImageFragment;
 import com.example.hong.saying.Util.ApiService;
 import com.example.hong.saying.Util.ColorPicker;
-import com.example.hong.saying.DataModel.Hit;
 import com.example.hong.saying.Util.LoadingProgress;
 import com.example.hong.saying.Util.PixabayImage;
 import com.example.hong.saying.Util.RealPathUtil;
 import com.example.hong.saying.Util.RetrofitCall;
 import com.example.hong.saying.Util.SharedPreference;
 import com.google.firebase.auth.FirebaseAuth;
-import com.volokh.danylo.hashtaghelper.HashTagHelper;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -66,9 +67,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class UploadActivity extends AppCompatActivity implements View.OnClickListener, ColorCallback, ButtonClick, Callback<PixabayImage>, RequestListener<Bitmap>, DataCallback, FileCallback {
-
-    private HashTagHelper mTextHashTagHelper;
+public class UploadActivity extends AppCompatActivity implements View.OnClickListener, ColorCallback, ButtonClick, Callback<PixabayImage>,
+        RequestListener<Bitmap>, DataCallback, FileCallback {
 
     private ColorPickerFragment pickerFragment = new ColorPickerFragment();
     private ImageFragment imageFragment = new ImageFragment();
@@ -80,7 +80,7 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
 
     private TextView complete;
     private ImageView image;
-    private EditText write, edit_hashTag;
+    private EditText write;
 
     private FragmentManager fragmentManager;
     private BottomSheetBehavior behavior;
@@ -129,10 +129,6 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
         complete = findViewById(R.id.complete);
         image = findViewById(R.id.image);
         write = findViewById(R.id.write);
-        edit_hashTag = findViewById(R.id.edit_hashTag);
-        mTextHashTagHelper = HashTagHelper.Creator.create(getResources().getColor(R.color.colorPrimary), null);
-        mTextHashTagHelper.handle(edit_hashTag);
-
 
         textColor.setOnClickListener(this);
         searchImage.setOnClickListener(this);
@@ -199,10 +195,14 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
 
 
         String color = Integer.toHexString(firstColor);
-        FeedModel feedModel = new FeedModel(imageUrl, userName, profileUrl, firstGravity, color, write.getText().toString(), System.currentTimeMillis(), userKey, edit_hashTag.getText().toString());
+        FeedModel feedModel = new FeedModel(imageUrl, userName, profileUrl, firstGravity, color, write.getText().toString(), System.currentTimeMillis(), userKey);
         FirebaseData firebaseData = new FirebaseData();
         firebaseData.setDataCallback(this);
         firebaseData.FeedDataUpload(feedModel);
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference aa = database.getReference().child("feed").child("profileUrl");
+
 
     }
 

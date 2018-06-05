@@ -1,6 +1,7 @@
 package com.example.hong.saying.DataModel;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,16 +18,14 @@ public class FeedModel implements Serializable {
     private String contents;
     private long time;
     private String userKey;
-    private String hashTag;
 
-    public int starCount = 0;
-    public Map<String, Boolean> stars = new HashMap<>();
+    ArrayList<String> scrap;
 
     public FeedModel() {
     }
 
     public FeedModel(String imageUrl, String userName, String profileUrl, int gravity, String textColor, String contents,
-                     long time, String userKey, String hashTag) {
+                     long time, String userKey) {
         this.imageUrl = imageUrl;
         this.userName = userName;
         this.profileUrl = profileUrl;
@@ -35,7 +34,6 @@ public class FeedModel implements Serializable {
         this.contents = contents;
         this.time = time;
         this.userKey = userKey;
-        this.hashTag = hashTag;
     }
 
     public long getTime() {
@@ -71,7 +69,12 @@ public class FeedModel implements Serializable {
         return userKey;
     }
 
-    public String getHashTag() {
-        return hashTag;
+    public ArrayList<String> getScrap() {
+        return scrap;
     }
+
+    public void setScrap(ArrayList<String> scrap) {
+        this.scrap = scrap;
+    }
+
 }

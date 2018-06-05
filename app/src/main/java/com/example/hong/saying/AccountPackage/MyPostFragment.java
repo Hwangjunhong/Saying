@@ -56,7 +56,7 @@ public class MyPostFragment extends Fragment{
     }
 
     public void addFeedModel(FeedModel feedModel) {
-        feedModels.add(feedModel);
+        feedModels.add(0, feedModel);
         adapter.notifyItemChanged(feedModels.size() - 1);
 
     }

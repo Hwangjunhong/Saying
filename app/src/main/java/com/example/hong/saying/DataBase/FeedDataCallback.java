@@ -7,5 +7,5 @@ import com.example.hong.saying.DataModel.FeedModel;
  */
 
 public interface FeedDataCallback {
-    void getFeedData(FeedModel feedModel);
+    void getFeedData(FeedModel feedModel, String key);
 }

@@ -51,7 +51,8 @@
         <activity android:name=".SearchActivity" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".AccountPackage.AccountActivity" />
-        <activity android:name=".MainActivity" />
+        <activity android:name=".MainActivity"
+            android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".SayDetailActivity" />
         <activity android:name=".SignUpActivity"></activity>
     </application>

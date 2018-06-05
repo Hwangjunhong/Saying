@@ -31,12 +31,14 @@ import java.util.ArrayList;
 public class SayFragment extends Fragment implements View.OnClickListener, FeedDataCallback,
         ScrollToTopClickListener, SwipeRefreshLayout.OnRefreshListener {
 
-    RecyclerView recyclerView;
-    ArrayList<FeedModel> feedModels = new ArrayList<>();
-    FeedAdapter adapter;
-    FloatingActionButton fab;
-    FirebaseData firebaseData = new FirebaseData();
-    SwipeRefreshLayout refreshLayout;
+    private RecyclerView recyclerView;
+    private ArrayList<FeedModel> feedModels = new ArrayList<>();
+    private FeedAdapter adapter;
+    private FloatingActionButton fab;
+    private FirebaseData firebaseData = new FirebaseData();
+    private SwipeRefreshLayout refreshLayout;
+
+    private ArrayList<String> keyList = new ArrayList<>();
 
 
     @Nullable
@@ -73,12 +75,10 @@ public class SayFragment extends Fragment implements View.OnClickListener, FeedD
 
 
     private void setRecyclerView() {
-        adapter = new FeedAdapter(getActivity(), feedModels);
+        adapter = new FeedAdapter(getActivity(), feedModels, keyList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setOnClickListener(this);
-
 
 
     }
@@ -97,18 +97,19 @@ public class SayFragment extends Fragment implements View.OnClickListener, FeedD
     }
 
     @Override
-    public void getFeedData(FeedModel feedModel) {
+    public void getFeedData(FeedModel feedModel, String key) {
         if (refreshLayout.isRefreshing()) {
             refreshLayout.setRefreshing(false);
         }
         feedModels.add(0, feedModel);
+        keyList.add(0, key);
         adapter.notifyItemInserted(0);
     }
 
     @Override
     public void scrollClick() {
         if (feedModels.size() > 4) {
-            recyclerView.scrollToPosition(2);
+            recyclerView.scrollToPosition(1);
         }
         recyclerView.smoothScrollToPosition(0);
     }

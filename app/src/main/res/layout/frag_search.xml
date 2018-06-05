@@ -8,23 +8,18 @@
     tools:context="com.example.hong.saying.SearchActivity">
 
     <include
-        android:id="@+id/sayToolBar"
-        layout="@layout/toolbar_search"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:visibility="gone"/>
-
-    <include
         android:id="@+id/sayToolBar2"
         layout="@layout/toolbar_search_change"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:visibility="visible"/>
+        android:layout_height="?attr/actionBarSize" />
 
-    <TextView
-        android:id="@+id/getHashTag"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content">
+
+
+    </android.support.v7.widget.RecyclerView>
 
 
 </LinearLayout>

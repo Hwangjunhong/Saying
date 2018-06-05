@@ -56,7 +56,7 @@ public class SearchActivity extends AppCompatActivity implements Callback<Pixaba
     }
 
     private void initView() {
-        backBt = findViewById(R.id.back_bt);
+        backBt = findViewById(R.id.search_image);
         resetBt = findViewById(R.id.reset_bt);
         searchEdit = findViewById(R.id.search_edit);
         recyclerView = findViewById(R.id.recycler);
@@ -156,7 +156,7 @@ public class SearchActivity extends AppCompatActivity implements Callback<Pixaba
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.back_bt:
+            case R.id.search_image:
                 finish();
                 break;
 

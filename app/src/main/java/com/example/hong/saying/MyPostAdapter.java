@@ -101,6 +101,7 @@ public class MyPostAdapter extends RecyclerView.Adapter<MyPostAdapter.ViewHolder
     private void goDetailIntent(FeedModel feedModel){
         Intent intent = new Intent(context, SayDetailActivity.class);
         Bundle bundle = new Bundle();
+
         bundle.putSerializable("feedData", feedModel);
         intent.putExtras(bundle);
         context.startActivity(intent);
