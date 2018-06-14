@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    tools:context="com.example.hong.saying.MainActivity">
+    tools:context="com.project.hong.saying.MainActivity">
 
     <android.support.v4.view.ViewPager
         android:id="@+id/container"

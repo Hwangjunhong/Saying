@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.hong.saying">
+    package="com.project.hong.saying">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -50,11 +50,18 @@
         <activity android:name=".Upload.UploadActivity" />
         <activity android:name=".SearchActivity" />
         <activity android:name=".LoginActivity" />
-        <activity android:name=".AccountPackage.AccountActivity" />
-        <activity android:name=".MainActivity"
-            android:windowSoftInputMode="adjustPan"/>
+        <activity
+            android:name=".AccountPackage.SettingActivity"
+            android:theme="@style/MyEdit" />
+        <activity
+            android:name=".MainActivity"
+            android:windowSoftInputMode="adjustPan" />
         <activity android:name=".SayDetailActivity" />
-        <activity android:name=".SignUpActivity"></activity>
+        <activity android:name=".SignUpActivity" />
+        <activity
+            android:name=".AccountPackage.ProfileEditPackage.ProfileEditActivity"
+            android:windowSoftInputMode="adjustPan" />
+        <activity android:name=".AccountPackage.LicenseActivity"/>
     </application>
 
 </manifest>

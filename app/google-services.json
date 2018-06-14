@@ -8,19 +8,23 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:950991310819:android:64c12ce5abbae17a",
+        "mobilesdk_app_id": "1:950991310819:android:0e65f7a83fb1e54a",
         "android_client_info": {
-          "package_name": "com.example.hong.saying"
+          "package_name": "com.project.hong.saying"
         }
       },
       "oauth_client": [
         {
-          "client_id": "950991310819-h6grn73lb8pcmsn6se8rr9jjo0rv88cd.apps.googleusercontent.com",
+          "client_id": "950991310819-3u3rdf7cc45qkqf2gvo8ru1unf3oh8kb.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.hong.saying",
+            "package_name": "com.project.hong.saying",
             "certificate_hash": "746195dcaa6154d69536bc1979c77e407f7aae7b"
           }
+        },
+        {
+          "client_id": "950991310819-hjceo2vlep9t995m85eeq10jaf1s1nta.apps.googleusercontent.com",
+          "client_type": 3
         },
         {
           "client_id": "950991310819-hjceo2vlep9t995m85eeq10jaf1s1nta.apps.googleusercontent.com",

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:padding="10dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:text="문의 및 제안"
+        android:textSize="20dp"
+        android:textStyle="italic"
+        android:typeface="serif"
+        />
+
+    <EditText
+        android:id="@+id/edit_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:hint="닉네임"
+        android:maxLines="1"
+        android:textSize="16dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        />
+
+    <EditText
+        android:id="@+id/edit_reply"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:hint="이메일 (선택)"
+        android:maxLines="1"
+        android:textSize="16dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"/>
+
+    <EditText
+        android:id="@+id/edit_suggest"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:hint="내용"
+        android:textSize="16dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/cancel_bt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="40dp"
+            android:background="@null"
+            android:text="취소"
+            android:textStyle="italic"
+            android:typeface="serif"/>
+
+        <Button
+            android:id="@+id/ok_bt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="40dp"
+            android:background="@null"
+            android:text="문의하기"
+            android:textStyle="italic"
+            android:typeface="serif"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.hong.saying.LoginActivity">
+    tools:context="com.project.hong.saying.LoginActivity">
 
     <TextView
         android:id="@+id/logoText"
