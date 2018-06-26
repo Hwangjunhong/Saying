@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.project.hong.saying.DataBase.FeedDataCallback;
 import com.project.hong.saying.DataBase.FirebaseData;
 import com.project.hong.saying.DataModel.FeedModel;
@@ -73,7 +74,7 @@ public class AccountFragment extends Fragment implements FeedDataCallback, View.
     }
 
     private void setData(){
-        Glide.with(getActivity()).load(myProfileUrl).into(profileImage);
+        Glide.with(getActivity()).load(myProfileUrl).apply(new RequestOptions().error(R.drawable.user).placeholder(R.drawable.user)).into(profileImage);
         userName.setText(myName);
     }
 
@@ -110,6 +111,12 @@ public class AccountFragment extends Fragment implements FeedDataCallback, View.
     public void getFeedData(FeedModel feedModel, String key) {
         myPostFragment.addFeedModel(feedModel, key);
 
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        firebaseData.removeCallback();
     }
 
     @Override

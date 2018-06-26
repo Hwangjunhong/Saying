@@ -1,7 +1,8 @@
-package com.project.hong.saying;
+package com.project.hong.saying.Ads;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -13,23 +14,29 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.edge.fbadhelper.FBAdManager;
+import com.edge.fbadhelper.FBAdapterSetting;
+import com.edge.fbadhelper.FBLoadListener;
+import com.facebook.ads.AdError;
+import com.facebook.ads.NativeAdsManager;
 import com.project.hong.saying.DataBase.FeedDataCallback;
 import com.project.hong.saying.DataBase.FirebaseData;
 import com.project.hong.saying.DataModel.FeedModel;
+import com.project.hong.saying.R;
+import com.project.hong.saying.ScrollToTopClickListener;
 import com.project.hong.saying.Upload.UploadActivity;
 
 import java.util.ArrayList;
 
 /**
- * Created by hong on 2018-04-03.
+ * Created by hong on 2018-06-20.
  */
 
-public class SayFragment extends Fragment implements View.OnClickListener, FeedDataCallback,
-        ScrollToTopClickListener, SwipeRefreshLayout.OnRefreshListener {
+public class AdsSayFragment extends Fragment implements View.OnClickListener, FeedDataCallback,
+        ScrollToTopClickListener, SwipeRefreshLayout.OnRefreshListener, FBLoadListener {
 
     private RecyclerView recyclerView;
     private ArrayList<FeedModel> feedModels = new ArrayList<>();
-    private FeedAdapter adapter;
+    private AdCustomAdapter adapter;
     private FloatingActionButton fab;
     private FirebaseData firebaseData = new FirebaseData();
     private SwipeRefreshLayout refreshLayout;
@@ -37,17 +44,20 @@ public class SayFragment extends Fragment implements View.OnClickListener, FeedD
     private ArrayList<String> keyList = new ArrayList<>();
 
 
+    ArrayList<String> arrayList = new ArrayList<>();
     FBAdManager manager;
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frag_say, container, false);
 
+        setArrayList();
         initView(view);
-        setRecyclerView();
+//        setRecyclerView();
+        setManager();
         getData();
+
 
         recyclerView.setOnClickListener(this);
 
@@ -72,14 +82,14 @@ public class SayFragment extends Fragment implements View.OnClickListener, FeedD
     }
 
 
-    private void setRecyclerView() {
-        adapter = new FeedAdapter(getContext(), feedModels, keyList);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(layoutManager);
-
-
-    }
+//    private void setRecyclerView() {
+//        adapter = new FeedAdapter(getActivity(), feedModels, keyList);
+//        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+//        recyclerView.setAdapter(adapter);
+//        recyclerView.setLayoutManager(layoutManager);
+//
+//
+//    }
 
     @Override
     public void onClick(View v) {
@@ -125,5 +135,51 @@ public class SayFragment extends Fragment implements View.OnClickListener, FeedD
         adapter.notifyItemChanged(position);
     }
 
+
+    private void setArrayList() {
+        for (int i = 0; i < 30; i++) {
+            arrayList.add(String.valueOf(i) + String.valueOf(i) + String.valueOf(i));
+        }
+    }
+
+
+    private void setRecyclerView() {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(layoutManager);
+
+
+    }
+
+    private void setAdapter(NativeAdsManager nativeAdsManager) {
+        FBAdapterSetting setting = new FBAdapterSetting.Builder()
+                .setAdInterval(10)
+                .setAdsManager(nativeAdsManager)
+                .build();
+        adapter = new AdCustomAdapter(getContext(), feedModels, keyList, setting);
+
+        setRecyclerView();
+    }
+
+
+    private void setManager() {
+        manager = new FBAdManager.Builder("241595176615214_241599689948096", getContext())
+                .setAdLoadCount(20)
+                .setListener(this)
+                .isCaching(true)
+                .build();
+    }
+
+
+    @Override
+    public void onLoadSuccess(NativeAdsManager nativeAdsManager) {
+        setAdapter(nativeAdsManager);
+    }
+
+    @Override
+    public void onLoadFail(AdError adError) {
+        setAdapter(null);
+    }
 
 }

@@ -1,30 +1,32 @@
 package com.project.hong.saying;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.design.widget.TextInputLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.dd.processbutton.iml.ActionProcessButton;
-import com.project.hong.saying.Util.ProgressGenerator;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.project.hong.saying.DataBase.DataCallback;
+import com.project.hong.saying.DataBase.FirebaseData;
+import com.project.hong.saying.DataModel.UserModel;
+import com.project.hong.saying.Util.LoadingProgress;
+import com.project.hong.saying.Util.SharedPreference;
+import com.rengwuxian.materialedittext.MaterialEditText;
 
-public class SignUpActivity extends AppCompatActivity implements View.OnClickListener, ProgressGenerator.OnCompleteListener {
+public class SignUpActivity extends AppCompatActivity implements View.OnClickListener, DataCallback {
 
-    public static final String EXTRAS_ENDLESS_MODE = "EXTRAS_ENDLESS_MODE";
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    EditText editEmail, editPw, editName;
-    ActionProcessButton signUpBt;
-    TextInputLayout edit1, edit2, edit3;
-    ProgressGenerator progressGenerator;
-
+    MaterialEditText editEmail, editPw, editName, editPwOk;
+    Button signUpBt;
+    RelativeLayout BackBt;
+    SharedPreference sharedPreference = new SharedPreference();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,10 +41,14 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     private void initView() {
         editEmail = findViewById(R.id.edit_email);
         editPw = findViewById(R.id.edit_pw);
+        editPwOk = findViewById(R.id.edit_pw_ok);
+        editName = findViewById(R.id.edit_name);
         signUpBt = findViewById(R.id.sign_up_bt);
+        BackBt = findViewById(R.id.back_bt);
 
         signUpBt.setOnClickListener(this);
-        progressGenerator = new ProgressGenerator(this);
+        BackBt.setOnClickListener(this);
+
     }
 
 
@@ -53,18 +59,23 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
 
+                            UserModel userModel = new UserModel();
+                            FirebaseData firebaseData = new FirebaseData();
+                            userModel.setName(editName.getText().toString());
+                            userModel.setPassword(editPw.getText().toString());
 
-//                            UserModel userModel = new UserModel();
-//                            SharedPreference sharedPreference = new SharedPreference();
+                            firebaseData.setDataCallback(SignUpActivity.this);
+                            firebaseData.userDataUpload(mAuth.getCurrentUser().getUid(), userModel);
 
-//                            String name = editName.getText().toString();
-//                            sharedPreference.getValue(SignUpActivity.this, "name", name);
+                            sharedPreference.put(SignUpActivity.this, "userName", editName.getText().toString());
 
-//                            Toast.makeText(SignUpActivity.this, "회원가입 성공", Toast.LENGTH_LONG).show();
+//                            sharedPreference.put(SignUpActivity.this, "userEmail", editEmail.getText().toString());
+//                            sharedPreference.put(SignUpActivity.this, "userPwd", editPw.getText().toString());
 
 
                         } else {
-
+                            LoadingProgress.dismissDialog();
+                            Toast.makeText(SignUpActivity.this, "중복 이메일이 존재합니다", Toast.LENGTH_SHORT).show();
                         }
 
                     }
@@ -77,36 +88,49 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
             case R.id.sign_up_bt:
 
-                Bundle extras = getIntent().getExtras();
-                if (extras != null && extras.getBoolean(EXTRAS_ENDLESS_MODE)) {
-                    signUpBt.setMode(ActionProcessButton.Mode.ENDLESS);
-                } else {
-                    signUpBt.setMode(ActionProcessButton.Mode.PROGRESS);
+                if (!editEmail.getText().toString().trim().isEmpty() && !editPw.getText().toString().trim().isEmpty()
+                        && !editName.getText().toString().trim().isEmpty() && !editPwOk.getText().toString().trim().isEmpty()) {
+
+                    if(editPw.getText().length() > 7 && editPwOk.getText().length() > 7){
+                        if (editPw.getText().toString().equals(editPwOk.getText().toString())) {
+                            LoadingProgress.showDialog(this);
+                            createUser(editEmail.getText().toString(), editPw.getText().toString());
+
+                        } else {
+                            Toast.makeText(this, "비밀번호가 일치하지 않습니다", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(this, "비밀번호는 8자 이상 입력해 주세요", Toast.LENGTH_SHORT).show();
+                    }
+
+
+                } else if (editEmail.getText().toString().trim().isEmpty() || editName.getText().toString().trim().isEmpty()
+                        || editPw.getText().toString().trim().isEmpty() || editPwOk.getText().toString().trim().isEmpty()) {
+                    Toast.makeText(this, "정보를 입력해 주세요", Toast.LENGTH_SHORT).show();
                 }
-                createUser(editEmail.getText().toString(), editPw.getText().toString());
-                progressGenerator.start(signUpBt);
-                signUpBt.setEnabled(false);
-                editEmail.setEnabled(false);
-                editPw.setEnabled(false);
 
                 break;
+
+
+            case R.id.back_bt:
+                Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+                break;
         }
+
+
     }
 
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
-        finish();
-    }
-
-    @Override
-    public void onComplete() {
-        Toast.makeText(this, "회원가입이 완료되었습니다 ", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
-        finish();
+    public void completeUpload(Boolean isSuccess) {
+        if (isSuccess) {
+            LoadingProgress.dismissDialog();
+            Toast.makeText(this, "회원가입이 완료되었습니다 ", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 }

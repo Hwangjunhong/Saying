@@ -16,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.project.hong.saying.Upload.UploadActivity;
 import com.project.hong.saying.Util.ApiService;
 import com.project.hong.saying.Util.GridSpacingItemDecoration;
 import com.project.hong.saying.DataModel.Hit;
@@ -56,7 +57,7 @@ public class SearchActivity extends AppCompatActivity implements Callback<Pixaba
     }
 
     private void initView() {
-        backBt = findViewById(R.id.search_image);
+        backBt = findViewById(R.id.back_bt);
         resetBt = findViewById(R.id.reset_bt);
         searchEdit = findViewById(R.id.search_edit);
         recyclerView = findViewById(R.id.recycler);
@@ -156,7 +157,7 @@ public class SearchActivity extends AppCompatActivity implements Callback<Pixaba
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.search_image:
+            case R.id.back_bt:
                 finish();
                 break;
 
@@ -198,6 +199,7 @@ public class SearchActivity extends AppCompatActivity implements Callback<Pixaba
                 if (!isLoading) {
                     getPixabayImage(keyword);
                 }
+
                 ((InputMethodManager) getApplicationContext()
                         .getSystemService(INPUT_METHOD_SERVICE))
                         .hideSoftInputFromWindow(searchEdit.getWindowToken(), 0);

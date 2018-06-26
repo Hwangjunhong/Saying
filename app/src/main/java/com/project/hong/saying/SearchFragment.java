@@ -39,8 +39,6 @@ import static android.content.Context.INPUT_METHOD_SERVICE;
 
 public class SearchFragment extends Fragment implements ValueEventListener, TextView.OnEditorActionListener, ScrollToTopClickListener, TextWatcher, View.OnClickListener {
 
-    private FirebaseData firebaseData = new FirebaseData();
-    private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("feed");
 
     private String query;
@@ -55,6 +53,7 @@ public class SearchFragment extends Fragment implements ValueEventListener, Text
 
     private EditText editText;
     private RelativeLayout resetBt;
+    private TextView empty;
 
     @Nullable
     @Override
@@ -72,11 +71,11 @@ public class SearchFragment extends Fragment implements ValueEventListener, Text
 
     private void initView(View view) {
         recycler = view.findViewById(R.id.recycler);
+        empty = view.findViewById(R.id.empty);
         editText = view.findViewById(R.id.edit_search);
         resetBt = view.findViewById(R.id.reset_bt);
         editText.setOnEditorActionListener(this);
         resetBt.setOnClickListener(this);
-
 
     }
 
@@ -126,6 +125,7 @@ public class SearchFragment extends Fragment implements ValueEventListener, Text
             FeedModel feedModel = snapshot.getValue(FeedModel.class);
             if (feedModel.getContents().contains(query) || feedModel.getUserName().contains(query)) {
                 if (lastKey != null) {
+                    empty.setVisibility(View.GONE);
                     if (!snapshot.getKey().equals(lastKey)) {
                         feedModels.add(0, feedModel);
                         keyList.add(0, snapshot.getKey());
@@ -134,6 +134,9 @@ public class SearchFragment extends Fragment implements ValueEventListener, Text
                     feedModels.add(0, feedModel);
                     keyList.add(0, snapshot.getKey());
                 }
+            }else{
+                empty.setText("검색 결과가 없습니다");
+                empty.setVisibility(View.VISIBLE);
             }
 
             lastKey = snapshot.getKey();
@@ -174,6 +177,7 @@ public class SearchFragment extends Fragment implements ValueEventListener, Text
                         .hideSoftInputFromWindow(editText.getWindowToken(), 0);
 
                 if (!isLoading) {
+                    empty.setVisibility(View.GONE);
                     searchFeed();
                 }
                 break;

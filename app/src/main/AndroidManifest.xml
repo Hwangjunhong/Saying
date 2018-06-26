@@ -9,20 +9,19 @@
     <application
         android:name=".SayApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/saying"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+
+
         <meta-data
             android:name="com.kakao.sdk.AppKey"
-            android:value="72c8273ff7518caa068c06537d93e35a" />
-        <meta-data
-            android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id" />
-        <meta-data
-            android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id" />
+            android:value="@string/kakao_app_key" />
 
         <activity
             android:name="com.facebook.CustomTabActivity"
@@ -40,28 +39,49 @@
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name" />
+
+
         <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="@string/kakaolink_host"
+                    android:scheme="@string/kakao_scheme" />
+
+            </intent-filter>
+
         </activity>
+
+
         <activity android:name=".Upload.UploadActivity" />
         <activity android:name=".SearchActivity" />
         <activity android:name=".LoginActivity" />
+
+        <activity
+            android:name=".MainActivity"
+            android:windowSoftInputMode="adjustPan" />
+
         <activity
             android:name=".AccountPackage.SettingActivity"
             android:theme="@style/MyEdit" />
         <activity
-            android:name=".MainActivity"
+            android:name=".SayDetailActivity"
             android:windowSoftInputMode="adjustPan" />
-        <activity android:name=".SayDetailActivity" />
         <activity android:name=".SignUpActivity" />
         <activity
-            android:name=".AccountPackage.ProfileEditPackage.ProfileEditActivity"
+            android:name=".AccountPackage.EditPackage.ProfileEditActivity"
             android:windowSoftInputMode="adjustPan" />
-        <activity android:name=".AccountPackage.LicenseActivity"/>
+        <activity android:name=".AccountPackage.LicenseActivity" />
+        <activity android:name=".AccountPackage.EditPackage.PwEditActivity"></activity>
     </application>
 
 </manifest>

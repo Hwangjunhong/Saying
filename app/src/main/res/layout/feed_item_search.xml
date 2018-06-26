@@ -8,7 +8,7 @@
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="120dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -54,7 +54,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/profile_image"
                 android:layout_toEndOf="@+id/profile_image"
-                android:textColor="@android:color/black"
+                android:textColor="@android:color/white"
                 tools:text="Hwang. J. H." />
         </RelativeLayout>
 

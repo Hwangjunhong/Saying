@@ -9,15 +9,11 @@ import java.util.ArrayList;
 public class UserModel {
     private String profileUrl;
     private String name;
+    private String password;
     private ArrayList<String> scrapList;
-    private ArrayList<String> commentList;
 
 
     public UserModel() {
-    }
-
-    public UserModel(String name) {
-        this.name = name;
     }
 
     public String getProfileUrl() {
@@ -44,11 +40,11 @@ public class UserModel {
         this.scrapList = scrapList;
     }
 
-    public ArrayList<String> getCommentList() {
-        return commentList;
+    public String getPassword() {
+        return password;
     }
 
-    public void setCommentList(ArrayList<String> commentList) {
-        this.commentList = commentList;
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

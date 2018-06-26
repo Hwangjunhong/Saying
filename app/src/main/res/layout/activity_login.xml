@@ -11,7 +11,7 @@
         android:id="@+id/logoText"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_weight="1.3"
         android:gravity="center"
         android:text="@string/app_name"
         android:textColor="@android:color/black"
@@ -28,94 +28,98 @@
             android:id="@+id/edit_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="60dp"
-            android:layout_marginStart="60dp"
+            android:layout_marginEnd="50dp"
+            android:layout_marginStart="50dp"
             android:hint="Email"
-            app:met_floatingLabel="normal"
-            app:met_floatingLabelPadding="2sp"
-            app:met_floatingLabelText="Email"
-            app:met_iconLeft="@drawable/email"
-            app:met_iconPadding="0dp"/>
+            android:maxLines="1"
+            app:met_clearButton="true"
+            android:textCursorDrawable="@drawable/search_cursor"
+            android:inputType="textEmailAddress"
+
+            />
 
         <com.rengwuxian.materialedittext.MaterialEditText
             android:id="@+id/edit_pw"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="60dp"
-            android:layout_marginStart="60dp"
-            app:met_floatingLabel="normal"
-            app:met_floatingLabelPadding="2sp"
-            app:met_floatingLabelText="Password"
+            android:layout_marginEnd="50dp"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="5dp"
             android:hint="Password"
-            app:met_iconLeft="@drawable/lock"
-            app:met_iconPadding="0dp"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            app:met_clearButton="true"
+            android:textCursorDrawable="@drawable/search_cursor"
+
             />
 
         <RelativeLayout
             android:id="@+id/email"
             android:layout_width="match_parent"
             android:layout_height="45dp"
-            android:layout_marginEnd="60dp"
-            android:layout_marginStart="60dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginEnd="50dp"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="10dp"
             android:background="@drawable/rectangle">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_marginEnd="40dp"
-            android:text="로그인"
-            android:textColor="@android:color/black"
-            android:textSize="16dp" />
-
-        </RelativeLayout>
-
-
-        <RelativeLayout
-            android:id="@+id/kakao"
-            android:layout_width="match_parent"
-            android:layout_height="45dp"
-            android:layout_marginEnd="60dp"
-            android:layout_marginStart="60dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/kakao_bt">
-
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="40dp"
-                android:src="@drawable/kakao_image" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="40dp"
-                android:gravity="end"
-                android:text="카카오톡 로그인"
+                android:layout_centerInParent="true"
+                android:text="로그인"
                 android:textColor="@android:color/black"
                 android:textSize="16dp" />
 
         </RelativeLayout>
 
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_marginEnd="50dp"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="30dp"
+            android:orientation="horizontal">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:background="#80808080" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:layout_marginStart="5dp"
+                android:text="또는" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:background="#80808080" />
+
+        </LinearLayout>
+
         <RelativeLayout
             android:id="@+id/facebook"
             android:layout_width="match_parent"
             android:layout_height="45dp"
-            android:layout_marginEnd="60dp"
-            android:layout_marginStart="60dp"
+            android:layout_marginEnd="50dp"
+            android:layout_marginStart="50dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/facebook_bt">
 
             <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="40dp"
-                android:src="@drawable/facebook_image" />
+                android:src="@drawable/facebook" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -125,7 +129,7 @@
                 android:layout_marginEnd="40dp"
                 android:gravity="end"
                 android:text="페이스북 로그인"
-                android:textColor="@android:color/black"
+                android:textColor="@color/colorPrimary"
                 android:textSize="16dp" />
 
             <com.facebook.login.widget.LoginButton
@@ -139,27 +143,28 @@
 
         </RelativeLayout>
 
-
-        <View
-            android:id="@+id/line"
-            android:layout_width="match_parent"
-            android:layout_height="0.1dp"
-            android:layout_marginEnd="60dp"
-            android:layout_marginStart="60dp"
-            android:layout_marginTop="15dp"
-            android:background="#90909090" />
-
-        <TextView
-            android:id="@+id/sign_up_bt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="60dp"
-            android:layout_marginStart="60dp"
-            android:layout_marginTop="15dp"
-            android:gravity="center"
-            android:text="회원이 아니신가요? 회원가입"
-            android:textColor="@color/colorPrimary" />
     </LinearLayout>
 
+    <View
+        android:id="@+id/line"
+        android:layout_width="match_parent"
+        android:layout_height="0.1dp"
+        android:background="#90909090" />
+
+    <RelativeLayout
+        android:id="@+id/sign_up_bt"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:padding="7dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_centerVertical="true"
+            android:text="회원이 아니신가요? 회원가입"
+            android:textColor="@color/colorPrimary" />
+
+    </RelativeLayout>
 
 </LinearLayout>

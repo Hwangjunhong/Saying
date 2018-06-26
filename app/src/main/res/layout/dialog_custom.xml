@@ -17,17 +17,6 @@
         android:typeface="serif"
         />
 
-    <EditText
-        android:id="@+id/edit_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="start"
-        android:hint="닉네임"
-        android:maxLines="1"
-        android:textSize="16dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginEnd="40dp"
-        />
 
     <EditText
         android:id="@+id/edit_reply"

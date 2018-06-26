@@ -2,6 +2,9 @@ package com.project.hong.saying.DataModel;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by hong on 2018-04-03.
@@ -14,17 +17,17 @@ public class FeedModel implements Serializable {
     private int gravity;
     private String textColor;
     private String contents;
-    private long time;
+    private String time;
     private String userKey;
 
-    ArrayList<String> comment;
+    HashMap<String, CommentModel> comment;
     ArrayList<String> scrap;
 
     public FeedModel() {
     }
 
     public FeedModel(String imageUrl, String userName, String profileUrl, int gravity, String textColor, String contents,
-                     long time, String userKey) {
+                     String time, String userKey) {
         this.imageUrl = imageUrl;
         this.userName = userName;
         this.profileUrl = profileUrl;
@@ -35,10 +38,13 @@ public class FeedModel implements Serializable {
         this.userKey = userKey;
     }
 
-    public long getTime() {
+    public String getTime() {
         return time;
     }
 
+    public void setTime(String time) {
+        this.time = time;
+    }
 
     public String getImageUrl() {
         return imageUrl;
@@ -76,11 +82,11 @@ public class FeedModel implements Serializable {
         this.scrap = scrap;
     }
 
-    public ArrayList<String> getComment() {
+    public HashMap<String, CommentModel> getComment() {
         return comment;
     }
 
-    public void setComment(ArrayList<String> comment) {
+    public void setComment(HashMap<String, CommentModel> comment) {
         this.comment = comment;
     }
 }

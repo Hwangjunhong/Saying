@@ -9,21 +9,30 @@ import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.facebook.AccessToken;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.project.hong.saying.Util.SharedPreference;
 
 public class SplashActivity extends AppCompatActivity implements Runnable {
 
-    TextView logoText;
-    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private TextView logoText;
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
+
+    private InterstitialAd mInterstitialAd;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +42,13 @@ public class SplashActivity extends AppCompatActivity implements Runnable {
         logoText = findViewById(R.id.logoText);
         Typeface typeface = Typeface.createFromAsset(getAssets(), "Walkway SemiBold.ttf");
         logoText.setTypeface(typeface);
+
+        MobileAds.initialize(this, "ca-app-pub-3940256099942544/1033173712");
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+
+
         checkLogin();
     }
 
@@ -74,10 +90,33 @@ public class SplashActivity extends AppCompatActivity implements Runnable {
 
     @Override
     public void run() {
+        Intent intent;
+        SharedPreference sharedPreference = new SharedPreference();
+        int LoginCheck = sharedPreference.getValue(SplashActivity.this, "checklogin", 0);
+
         Pair<View, String> pair = Pair.create((View) logoText, "logo_transition");
         ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(this, pair);
-        Intent intent = new Intent(this, LoginActivity.class);
+        if (LoginCheck == 1) {
+            intent = new Intent(SplashActivity.this, MainActivity.class);
+        } else {
+            intent = new Intent(this, LoginActivity.class);
+
+        }
         startActivity(intent, optionsCompat.toBundle());
         finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(FirebaseAuth.getInstance().getCurrentUser() != null){
+
+            if (mInterstitialAd.isLoaded()) {
+                mInterstitialAd.show();
+            } else {
+                Log.d("TAG", "The interstitial wasn't loaded yet.");
+            }
+        }
+
     }
 }

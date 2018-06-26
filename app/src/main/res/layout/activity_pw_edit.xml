@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.project.hong.saying.AccountPackage.EditPackage.PwEditActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:contentInsetStart="0dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Change Password "
+                android:textColor="@android:color/black"
+                android:textSize="17dp"
+                android:textStyle="italic|bold"
+                android:typeface="serif" />
+
+            <RelativeLayout
+                android:id="@+id/back_bt"
+                android:layout_width="?attr/actionBarSize"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/back" />
+
+            </RelativeLayout>
+
+
+        </RelativeLayout>
+    </android.support.v7.widget.Toolbar>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@+id/toolbar"
+        android:layout_marginTop="30dp">
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/edit_origin_pw"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="40dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="20dp"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            android:textCursorDrawable="@drawable/search_cursor"
+            app:met_clearButton="true"
+            app:met_helperText="8자 이상 입력해 주세요"
+            app:met_helperTextAlwaysShown="true"
+            app:met_helperTextColor="@color/colorPrimary" />
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/edit_change_pw"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="40dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="20dp"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            android:textCursorDrawable="@drawable/search_cursor"
+            app:met_clearButton="true"
+            app:met_helperText="8자 이상 입력해 주세요"
+            app:met_helperTextAlwaysShown="true"
+            app:met_helperTextColor="@color/colorPrimary" />
+
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/edit_change_pw_ok"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="40dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="20dp"
+            android:hint="Retype Password"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            android:textCursorDrawable="@drawable/search_cursor"
+            app:met_clearButton="true"
+            app:met_helperText="8자 이상 입력해 주세요"
+            app:met_helperTextAlwaysShown="true"
+            app:met_helperTextColor="@color/colorPrimary" />
+
+
+    </LinearLayout>
+
+
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_above="@+id/complete_bt"
+        android:src="@drawable/shadow_gradient" />
+
+    <TextView
+        android:id="@+id/complete_bt"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:text="완료"
+        android:textSize="17dp" />
+
+
+</RelativeLayout>

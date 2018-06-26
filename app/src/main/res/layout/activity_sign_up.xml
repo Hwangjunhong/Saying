@@ -1,12 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.project.hong.saying.SignUpActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:contentInsetStart="0dp">
+
+        <RelativeLayout
+            android:id="@+id/back_bt"
+            android:layout_width="?attr/actionBarSize"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_centerInParent="true"
+                android:src="@drawable/back" />
+
+
+        </RelativeLayout>
+    </android.support.v7.widget.Toolbar>
+
 
     <com.rengwuxian.materialedittext.MaterialEditText
         android:id="@+id/edit_email"
@@ -14,13 +34,31 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="40dp"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
         android:hint="Email"
-        app:met_floatingLabel="highlight"
-        app:met_floatingLabelText="Email"
-        app:met_iconLeft="@drawable/email"
-        app:met_iconPadding="0dp"/>
+        android:inputType="textEmailAddress"
+        android:maxLines="1"
+        app:met_clearButton="true"
+        app:met_helperText="Ex) amuge@naver.com"
+        app:met_helperTextAlwaysShown="true"
+        app:met_helperTextColor="@color/colorPrimary"
+        android:textCursorDrawable="@drawable/search_cursor"/>
 
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/edit_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="40dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="10dp"
+        android:hint="UserName"
+        android:maxLines="1"
+        app:met_clearButton="true"
+        app:met_helperText="Ex) 아무개"
+        app:met_helperTextAlwaysShown="true"
+        app:met_helperTextColor="@color/colorPrimary"
+        android:textCursorDrawable="@drawable/search_cursor"/>
 
     <com.rengwuxian.materialedittext.MaterialEditText
         android:id="@+id/edit_pw"
@@ -28,11 +66,15 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="40dp"
         android:layout_marginStart="40dp"
+        android:layout_marginTop="10dp"
         android:hint="Password"
-        app:met_floatingLabel="highlight"
-        app:met_floatingLabelText="Password"
-        app:met_iconLeft="@drawable/lock"
-        app:met_iconPadding="0dp"/>
+        android:inputType="textPassword"
+        android:maxLines="1"
+        app:met_clearButton="true"
+        app:met_helperText="8자 이상 입력해 주세요"
+        app:met_helperTextAlwaysShown="true"
+        app:met_helperTextColor="@color/colorPrimary"
+        android:textCursorDrawable="@drawable/search_cursor"/>
 
 
     <com.rengwuxian.materialedittext.MaterialEditText
@@ -41,30 +83,28 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="40dp"
         android:layout_marginStart="40dp"
+        android:layout_marginTop="10dp"
         android:hint="Retype Password"
-        app:met_floatingLabelText="Password"
-        app:met_iconLeft="@drawable/lock"
-        app:met_iconPadding="0dp"/>
+        android:inputType="textPassword"
+        android:maxLines="1"
+        app:met_clearButton="true"
+        app:met_helperText="8자 이상 입력해 주세요"
+        app:met_helperTextAlwaysShown="true"
+        app:met_helperTextColor="@color/colorPrimary"
+        android:textCursorDrawable="@drawable/search_cursor"/>
 
-    <com.dd.processbutton.iml.ActionProcessButton
+    <Button
         android:id="@+id/sign_up_bt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="40dp"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/rectangle"
         android:text="회원 가입"
         android:textColor="@android:color/black"
-        android:textSize="18sp"
-        custom:pb_colorComplete="@color/green_complete"
-        custom:pb_colorError="@color/red_error"
-        custom:pb_colorNormal="@android:color/white"
-        custom:pb_colorPressed="@color/colorPrimaryDark"
-        custom:pb_colorProgress="@color/purple_progress"
-        custom:pb_textComplete="Success"
-        custom:pb_textError="Error"
-        custom:pb_textProgress="Loading" />
+        android:textSize="18sp" />
 
 
 </LinearLayout>

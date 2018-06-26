@@ -21,7 +21,7 @@ public class RetrofitCall {
         Retrofit retrofit = new Retrofit.Builder().baseUrl(ApiService.BASE_URL)
                 .client(client).addConverterFactory(GsonConverterFactory.create()).build();
 
-
         return retrofit.create(ApiService.class);
+
     }
 }

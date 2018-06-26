@@ -2,9 +2,6 @@ package com.project.hong.saying.DataBase;
 
 import android.support.annotation.NonNull;
 
-import com.google.firebase.database.ValueEventListener;
-import com.project.hong.saying.DataModel.FeedModel;
-import com.project.hong.saying.DataModel.UserModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
@@ -12,6 +9,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.project.hong.saying.DataModel.FeedModel;
+import com.project.hong.saying.DataModel.UserModel;
 
 /**
  * Created by hong on 2018-05-08.

@@ -18,8 +18,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-
     </android.support.v7.widget.RecyclerView>
+
+    <TextView
+        android:id="@+id/empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="내용 또는 작성자 이름을 검색해 보세요"
+        android:gravity="center"
+        android:visibility="visible"/>
 
 
 </LinearLayout>

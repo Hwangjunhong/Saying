@@ -36,14 +36,17 @@ public class MyPostFragment extends Fragment{
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.frag_mypost, container, false);
-        recyclerView = view.findViewById(R.id.recycler);
-        empty = view.findViewById(R.id.empty);
 
+        initView(view);
         setRecyclerView();
 
         return view;
     }
 
+    private void initView(View view){
+        recyclerView = view.findViewById(R.id.recycler);
+        empty = view.findViewById(R.id.empty);
+    }
     private void setRecyclerView(){
         adapter = new MyPostAdapter(feedModels, getActivity(), keyList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -62,10 +65,16 @@ public class MyPostFragment extends Fragment{
     }
 
     public void addFeedModel(FeedModel feedModel, String key) {
+        empty.setVisibility(View.GONE);
         feedModels.add(0, feedModel);
-        keyList.add(key);
+        keyList.add(0, key);
         adapter.notifyItemChanged(feedModels.size() - 1);
 
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
 
     }
 }

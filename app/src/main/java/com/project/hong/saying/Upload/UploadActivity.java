@@ -1,6 +1,8 @@
 package com.project.hong.saying.Upload;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
@@ -8,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -35,6 +38,9 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.transition.Transition;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.project.hong.saying.DataBase.DataCallback;
 import com.project.hong.saying.DataBase.FileCallback;
 import com.project.hong.saying.DataBase.FireBaseFile;
@@ -60,7 +66,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -98,7 +106,9 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
     private String galleryUri;
     private String imageUrl;
 
-    private File pixabayFile;
+    Date date = new Date();
+
+    Call<PixabayImage> getImage;
 
     RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
@@ -118,6 +128,7 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
         pickerFragment.setButtonClick(this);
         imageFragment.setButtonClick(this);
         gravityFragment.setOnButtonClick(this);
+
 
     }
 
@@ -166,6 +177,10 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                 openFragment(imageFragment);
                 behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
+                //
+                getImage.cancel();
+                //
+
                 break;
             case R.id.text_location:
                 openFragment(gravityFragment);
@@ -176,15 +191,45 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                 finish();
                 break;
             case R.id.complete:
-                if (pixabayFile == null) {
+                if (imageUrl == null) {
                     Toast.makeText(this, "이미지가 로딩중 입니다. \n잠시만 기다려주세요.", Toast.LENGTH_LONG).show();
                 } else {
                     LoadingProgress.showDialog(this, true);
                     uploadFile();
                 }
+
                 break;
 
         }
+    }
+
+    private static class TIME_MAXIMUM{
+        public static final int SEC = 60;
+        public static final int MIN = 60;
+        public static final int HOUR = 24;
+        public static final int DAY = 30;
+        public static final int MONTH = 12;
+    }
+
+    public static String formatTimeString(Date date) {
+        long curTime = System.currentTimeMillis();
+        long regTime = date.getTime();
+        long diffTime = (curTime - regTime) / 1000;
+        String msg = null;
+        if (diffTime < TIME_MAXIMUM.SEC) {
+            msg = "방금 전";
+        } else if ((diffTime /= TIME_MAXIMUM.SEC) < TIME_MAXIMUM.MIN) {
+            msg = diffTime + "분 전";
+        } else if ((diffTime /= TIME_MAXIMUM.MIN) < TIME_MAXIMUM.HOUR) {
+            msg = (diffTime) + "시간 전";
+        } else if ((diffTime /= TIME_MAXIMUM.HOUR) < TIME_MAXIMUM.DAY) {
+            msg = (diffTime) + "일 전";
+        } else if ((diffTime /= TIME_MAXIMUM.DAY) < TIME_MAXIMUM.MONTH) {
+            msg = (diffTime) + "달 전";
+        } else {
+            msg = (diffTime) + "년 전";
+        }
+        return msg;
     }
 
     private void uploadData() {
@@ -194,26 +239,20 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         String userKey = firebaseAuth.getCurrentUser().getUid();
 
-
         String color = Integer.toHexString(firstColor);
-        FeedModel feedModel = new FeedModel(imageUrl, userName, profileUrl, firstGravity, color, write.getText().toString(), System.currentTimeMillis(), userKey);
+        FeedModel feedModel = new FeedModel(imageUrl, userName, profileUrl, firstGravity, color, write.getText().toString(), formatTimeString(date), userKey);
         FirebaseData firebaseData = new FirebaseData();
         firebaseData.setDataCallback(this);
         firebaseData.FeedDataUpload(feedModel);
-
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference reference = database.getReference().child("feed").child("profileUrl");
-
 
     }
 
     private void uploadFile() {
         FireBaseFile fireBaseFile = new FireBaseFile(this);
         if (!isGallery) {
-            fireBaseFile.fileUpload("feedImage",pixabayFile);
+            fireBaseFile.fileUpload("feedImage", imageUrl, this);
         } else {
-            File file = new File(galleryUri);
-            fireBaseFile.fileUpload("feedImage",file);
+            fireBaseFile.fileUpload("feedImage", galleryUri, this);
         }
 
 
@@ -246,6 +285,7 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                     firstGravity = secondGravity;
                 }
                 onBackPressed();
+
                 break;
 
             case R.id.search_image:
@@ -255,10 +295,11 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                 break;
 
             case R.id.select_gallery:
-                isGallery = true;
-                Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(Intent.createChooser(intent, "Select Picture"), 100);
-
+                if (checkPermission()) {
+                    isGallery = true;
+                    Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    startActivityForResult(Intent.createChooser(intent, "Select Picture"), 100);
+                }
                 break;
 
             case R.id.gravity_center:
@@ -282,6 +323,15 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                 break;
 
 
+        }
+    }
+
+    private boolean checkPermission() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 900);
+            return false;
+        } else {
+            return true;
         }
     }
 
@@ -340,12 +390,13 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
             isOpen = false;
         } else {
             super.onBackPressed();
-
         }
+
+
     }
 
     private void getPixabayImage(String keyword) {
-        Call<PixabayImage> getImage = RetrofitCall.retrofit()
+        getImage = RetrofitCall.retrofit()
                 .getRandomImage(ApiService.APP_KEY, keyword, "popular", "photo");
 
         getImage.enqueue(this);
@@ -383,8 +434,6 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                 requestManager.asBitmap().load(path).apply(new RequestOptions().override(400, 300))
                         .thumbnail(0.1f).listener(this).transition(GenericTransitionOptions.with(R.anim.alpha_anim)).into(image);
 
-                getPixabayFile(path);
-
 
             } else {
                 requestManager.asBitmap().load(uri)
@@ -412,6 +461,7 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                 if (data != null) {
                     isGallery = false;
                     String path = data.getStringExtra("path");
+                    getImage.cancel();
                     imageUrl = path;
                     Glide.with(this).asBitmap()
                             .load(path)
@@ -420,26 +470,25 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                             .into(image);
 
 
-                    getPixabayFile(path);
-
                     onBackPressed();
                 }
                 break;
+
 
         }
 
     }
 
-    private void getPixabayFile(String url) {
-        Glide.with(this).downloadOnly().load(url)
-                .into(new SimpleTarget<File>() {
-                    @Override
-                    public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
-                        pixabayFile = resource;
-                    }
-                });
-
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            isGallery = true;
+            Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(Intent.createChooser(intent, "Select Picture"), 100);
+        }
     }
+
 
     @Override
     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
@@ -478,4 +527,5 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
             Toast.makeText(this, "데이터 업로드 실패", Toast.LENGTH_SHORT).show();
         }
     }
+
 }

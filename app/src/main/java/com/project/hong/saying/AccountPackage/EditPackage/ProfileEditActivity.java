@@ -1,10 +1,12 @@
-package com.project.hong.saying.AccountPackage.ProfileEditPackage;
+package com.project.hong.saying.AccountPackage.EditPackage;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -12,33 +14,24 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.transition.Transition;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.project.hong.saying.DataBase.FileCallback;
 import com.project.hong.saying.DataBase.FireBaseFile;
-import com.project.hong.saying.DataBase.FirebaseData;
-import com.project.hong.saying.DataModel.FeedModel;
-import com.project.hong.saying.DataModel.UserModel;
-import com.project.hong.saying.LoginActivity;
 import com.project.hong.saying.R;
 import com.project.hong.saying.Util.LoadingProgress;
+import com.project.hong.saying.Util.RealPathUtil;
 import com.project.hong.saying.Util.SharedPreference;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,7 +47,6 @@ public class ProfileEditActivity extends AppCompatActivity implements TextWatche
     FireBaseFile fireBaseFile = new FireBaseFile(this);
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference reference = database.getReference().child("user");
-    DatabaseReference reference1 = database.getReference().child("feed");
     FirebaseAuth auth = FirebaseAuth.getInstance();
     String uid, userName, profileUrl;
     Uri uri;
@@ -70,7 +62,7 @@ public class ProfileEditActivity extends AppCompatActivity implements TextWatche
         initView();
     }
 
-    private void initView(){
+    private void initView() {
         profileImage = findViewById(R.id.profile_image);
         backBt = findViewById(R.id.back_bt);
         userNameEdit = findViewById(R.id.user_name);
@@ -82,7 +74,7 @@ public class ProfileEditActivity extends AppCompatActivity implements TextWatche
         backBt.setOnClickListener(this);
 
         userNameEdit.setText(userName);
-        Glide.with(this).load(profileUrl).into(profileImage);
+        Glide.with(this).load(profileUrl).apply(new RequestOptions().placeholder(R.drawable.user1).error(R.drawable.user1)).into(profileImage);
 
     }
 
@@ -98,7 +90,7 @@ public class ProfileEditActivity extends AppCompatActivity implements TextWatche
 
     @Override
     public void afterTextChanged(Editable s) {
-        if(s.length() > 1){
+        if (s.length() > 1) {
             completeBt.setEnabled(true);
         } else {
             completeBt.setEnabled(false);
@@ -107,16 +99,19 @@ public class ProfileEditActivity extends AppCompatActivity implements TextWatche
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.profile_image:
-                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent, 200);
+                if (checkPermission()) {
+                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    startActivityForResult(intent, 200);
+
+                }
                 break;
 
             case R.id.complete_bt:
                 LoadingProgress.showDialog(this, true);
-                userName = userNameEdit.getText().toString().replace(" ","");
-                if(!isProfileChange){
+                userName = userNameEdit.getText().toString().replace(" ", "");
+                if (!isProfileChange) {
                     dataUpload(userName, profileUrl);
                 } else {
                     startUpload();
@@ -130,13 +125,32 @@ public class ProfileEditActivity extends AppCompatActivity implements TextWatche
         }
     }
 
+    private boolean checkPermission() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 900);
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(Intent.createChooser(intent, "Select Picture"), 100);
+        }
+    }
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(data != null){
-           uri = data.getData();
-           Glide.with(this).load(uri).into(profileImage);
-           isProfileChange = true;
+        if (data != null) {
+            uri = data.getData();
+            Glide.with(this).load(uri).into(profileImage);
+            isProfileChange = true;
         }
 
     }
@@ -147,20 +161,15 @@ public class ProfileEditActivity extends AppCompatActivity implements TextWatche
 
     }
 
-    private void startUpload(){
-        Glide.with(this).downloadOnly().load(uri).into(new SimpleTarget<File>() {
-            @Override
-            public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
-                fireBaseFile.fileUpload("profileImage", resource);
-            }
-        });
+    private void startUpload() {
+        fireBaseFile.fileUpload("profileImage", RealPathUtil.getRealPath(this, uri), this);
     }
 
-    private void dataUpload(final String name, final String profileUrl){
+    private void dataUpload(final String name, final String profileUrl) {
         uid = auth.getCurrentUser().getUid();
         Map<String, Object> child = new HashMap<>();
         child.put("name", name);
-        if(!TextUtils.isEmpty(profileUrl)){
+        if (!TextUtils.isEmpty(profileUrl)) {
             child.put("profileUrl", profileUrl);
         }
         reference.child(uid).updateChildren(child).addOnCompleteListener(this);
@@ -175,7 +184,7 @@ public class ProfileEditActivity extends AppCompatActivity implements TextWatche
     @Override
     public void onComplete(@NonNull Task<Void> task) {
         LoadingProgress.dismissDialog();
-        if(task.isSuccessful()){
+        if (task.isSuccessful()) {
             sharedPreference.put(this, "userName", userName);
             sharedPreference.put(this, "profileUrl", profileUrl);
             finish();
@@ -184,8 +193,6 @@ public class ProfileEditActivity extends AppCompatActivity implements TextWatche
             isProfileChange = false;
         }
     }
-
-
 
 
 }

@@ -84,6 +84,43 @@
             android:background="#ddd" />
     </RelativeLayout>
 
+
+    <RelativeLayout
+        android:id="@+id/edit_pw_bt"
+        android:layout_width="match_parent"
+        android:layout_marginTop="20dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginStart="40dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="5dp"
+            android:layout_marginStart="15dp"
+            android:gravity="start"
+            android:text="비밀번호 변경"
+            android:textColor="@android:color/black"
+            android:textSize="14dp" />
+
+        <ImageView
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="15dp"
+            android:src="@drawable/next" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.1dp"
+            android:layout_alignParentBottom="true"
+            android:background="#ddd" />
+    </RelativeLayout>
+
+
     <RelativeLayout
         android:id="@+id/license_bt"
         android:layout_width="match_parent"
@@ -100,6 +137,41 @@
             android:layout_marginStart="15dp"
             android:gravity="start"
             android:text="오픈소스 라이선스"
+            android:textColor="@android:color/black"
+            android:textSize="14dp" />
+
+        <ImageView
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="15dp"
+            android:src="@drawable/next" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.1dp"
+            android:layout_alignParentBottom="true"
+            android:background="#ddd" />
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/invite_bt"
+        android:layout_width="match_parent"
+        android:layout_marginTop="20dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginStart="40dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="5dp"
+            android:layout_marginStart="15dp"
+            android:gravity="start"
+            android:text="초대하기"
             android:textColor="@android:color/black"
             android:textSize="14dp" />
 

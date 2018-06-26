@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -32,18 +33,18 @@ import java.util.Collections;
 
 public class ScrapFragment extends Fragment implements ValueEventListener {
 
-    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference reference;
-    DatabaseReference feedReference;
-    String uid;
-    UserModel userModel;
-    ArrayList<FeedModel> feedModels = new ArrayList<>();
-    ArrayList<String> keyList = new ArrayList<>();
+    private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    private FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private DatabaseReference reference;
+    private DatabaseReference feedReference;
 
-    RecyclerView recyclerView;
-    MyPostAdapter adapter;
-
+    private String uid;
+    private UserModel userModel;
+    private ArrayList<FeedModel> feedModels = new ArrayList<>();
+    private ArrayList<String> keyList = new ArrayList<>();
+    private RecyclerView recyclerView;
+    private MyPostAdapter adapter;
+    private TextView empty;
 
     @Nullable
     @Override
@@ -60,6 +61,7 @@ public class ScrapFragment extends Fragment implements ValueEventListener {
 
     private void initView(View view) {
         recyclerView = view.findViewById(R.id.recycler);
+        empty = view.findViewById(R.id.empty);
 
     }
 
@@ -91,6 +93,7 @@ public class ScrapFragment extends Fragment implements ValueEventListener {
         userModel = dataSnapshot.getValue(UserModel.class);
         if (userModel != null) {
             if (userModel.getScrapList() != null) {
+                empty.setVisibility(View.GONE);
                 Collections.reverse(userModel.getScrapList());
                 keyList.addAll(userModel.getScrapList());
                 getFeedData();

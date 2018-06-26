@@ -74,6 +74,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         holder.itemView.setTag(position);
 
 
+
     }
 
     @Override
@@ -97,7 +98,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         TextView contents;
         View itemView;
         CircleImageView profileImage;
-        TextView userName;
+        TextView userName, time;
 
 
         public ViewHolder(View itemView) {

@@ -5,21 +5,13 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.request.RequestOptions;
-import com.google.firebase.auth.FirebaseUser;
-import com.project.hong.saying.DataBase.DataCallback;
-import com.project.hong.saying.DataBase.FirebaseData;
-import com.project.hong.saying.DataModel.UserModel;
-import com.project.hong.saying.KakaoPackage.SessionCallback;
-import com.project.hong.saying.Util.LoadingProgress;
-import com.project.hong.saying.Util.SharedPreference;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -34,19 +26,29 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.ProviderQueryResult;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.project.hong.saying.DataBase.DataCallback;
+import com.project.hong.saying.DataBase.FirebaseData;
+import com.project.hong.saying.DataModel.UserModel;
+import com.project.hong.saying.KakaoPackage.SessionCallback;
+import com.project.hong.saying.Util.LoadingProgress;
+import com.project.hong.saying.Util.SharedPreference;
+import com.rengwuxian.materialedittext.MaterialEditText;
+
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener, FacebookCallback<LoginResult>, DataCallback {
 
-    TextView logoText;
-    RelativeLayout kakaoLogin, facebookLogin, emailLogin;
-    SessionCallback sessionCallback;
+    private TextView logoText;
+    private RelativeLayout facebookLogin, emailLogin, signUpBt;
+    private SessionCallback sessionCallback;
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    CallbackManager callbackManager;
-    LoginButton facebookBt;
+    private CallbackManager callbackManager;
+    private LoginButton facebookBt;
     SharedPreference sharedPreference = new SharedPreference();
 
-    EditText editEmail, editPw;
-    TextView signUpBt;
+    private MaterialEditText editEmail, editPw;
+    private String uid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,27 +63,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
 
-//    public static String getKeyHash(final Context context) {
-//        PackageInfo packageInfo = getPackageInfo(context, PackageManager.GET_SIGNATURES);
-//        if (packageInfo == null)
-//            return null;
-//
-//        for (Signature signature : packageInfo.signatures) {
-//            try {
-//                MessageDigest md = MessageDigest.getInstance("SHA");
-//                md.update(signature.toByteArray());
-//                return Base64.encodeToString(md.digest(), Base64.NO_WRAP);
-//            } catch (NoSuchAlgorithmException e) {
-//                Log.w("asdasd", "Unable to get MessageDigest. signature=" + signature, e);
-//            }
-//        }
-//        return null;
-//    }
-
     private void initView() {
         logoText = findViewById(R.id.logoText);
-        kakaoLogin = findViewById(R.id.kakao);
-
         facebookLogin = findViewById(R.id.facebook);
         facebookBt = findViewById(R.id.login_button);
         facebookBt.setReadPermissions("email");
@@ -94,7 +77,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         Typeface typeface = Typeface.createFromAsset(getAssets(), "Walkway SemiBold.ttf");
         logoText.setTypeface(typeface);
         emailLogin.setOnClickListener(this);
-        kakaoLogin.setOnClickListener(this);
         facebookLogin.setOnClickListener(this);
         facebookBt.registerCallback(callbackManager, this);
 
@@ -105,25 +87,38 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.kakao:
-//                kakaoLogin();
-                break;
             case R.id.facebook:
 //                LoadingProgress.showDialog(this, true);
                 AccessToken accessToken = AccessToken.getCurrentAccessToken();
                 if (accessToken != null) {
-                    handleFacebookAccessToken(accessToken);
+                    handleFacebookAccessToken(accessToken, true);
                 } else {
                     facebookBt.performClick();
                 }
                 break;
 
             case R.id.email:
-                FirebaseUser user = mAuth.getCurrentUser();
 
-                LoadingProgress.showDialog(this, true);
-                performLoginOrAccountCreation(editEmail.getText().toString(), editPw.getText().toString());
-//                emailSignIn(editEmail.getText().toString(), editPw.getText().toString());
+//                SharedPreference sharedPreference = new SharedPreference();
+//                String email = sharedPreference.getValue(this, "userEmail", "");
+//                String pwd = sharedPreference.getValue(this, "userPwd", "");
+
+                // TODO: 2018-06-19  로그인 회원 이메일 정보, 비밀번호 정보 받아와야됨. 야매로 해도 비밀번호 해결이 안됨.
+
+                if (!editEmail.getText().toString().trim().isEmpty() && !editPw.getText().toString().trim().isEmpty()) {
+                    if (!TextUtils.isEmpty(editEmail.getText().toString()) && !TextUtils.isEmpty(editPw.getText().toString())) {
+
+                        LoadingProgress.showDialog(this, true);
+                        performLoginOrAccountCreation(editEmail.getText().toString(), editPw.getText().toString());
+                    } else {
+                        Toast.makeText(this, "정보를 확인해 주세요", Toast.LENGTH_SHORT).show();
+                    }
+
+                } else {
+                    LoadingProgress.dismissDialog();
+                    Toast.makeText(this, "정보를 입력해 주세요", Toast.LENGTH_SHORT).show();
+                }
+
 
                 break;
 
@@ -137,191 +132,39 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
 
-//    private void kakaoLogin() {
-//        Session.getCurrentSession().addCallback(sessionCallback);
-//        Session.getCurrentSession().checkAndImplicitOpen();
-//        Session.getCurrentSession().open(AuthType.KAKAO_LOGIN_ALL, this);
-//    }
-
-//    @Override
-//    public void kakaoResult(String result) {
-//        switch (result) {
-//            case "OK":
-//                requestAccessTokenInfo();
-//                break;
-//            case "FAIL":
-//                Toast.makeText(this, "로그인 실패", Toast.LENGTH_SHORT).show();
-//                break;
-//        }
-//    }
-
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (Session.getCurrentSession().handleActivityResult(requestCode, resultCode, data)) {
-//            return;
-//        }
-//
-//        super.onActivityResult(requestCode, resultCode, data);
-//    }
-//
-//    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
-//        Session.getCurrentSession().removeCallback(sessionCallback);
-//    }
-
-//    private void requestAccessTokenInfo() {
-//        AuthService.getInstance().requestAccessTokenInfo(new ApiResponseCallback<AccessTokenInfoResponse>() {
-//            @Override
-//            public void onSessionClosed(ErrorResult errorResult) {
-//
-//            }
-//
-//            @Override
-//            public void onNotSignedUp() {
-//                // not happened
-//            }
-//
-//            @Override
-//            public void onFailure(ErrorResult errorResult) {
-//                Logger.e("failed to get access token info. msg=" + errorResult);
-//            }
-//
-//            @Override
-//            public void onSuccess(AccessTokenInfoResponse accessTokenInfoResponse) {
-//                long userId = accessTokenInfoResponse.getUserId();
-//                Logger.d("aaa", "this access token is for userId=" + userId);
-//
-//                long expiresInMilis = accessTokenInfoResponse.getExpiresInMillis();
-//                Logger.d("bbb", "this access token expires after " + expiresInMilis + " milliseconds.");
-//
-//
-//                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-//                startActivity(intent);
-//                finish();
-//
-////                String customToken = getFirebaseToken(userId);
-////                signInFirebaseToken(customToken);
-//
-//
-//            }
-//        });
-//    }
-//
-//    private void signInFirebaseToken(String token) {
-//        mAuth.signInWithCustomToken(token)
-//                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<AuthResult> task) {
-//
-//                        FirebaseUser user = mAuth.getCurrentUser();
-//
-//                        if (task.isSuccessful()) {
-//                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-//                            startActivity(intent);
-//                            finish();
-//
-//                        } else {
-//
-//                        }
-//                    }
-//                });
-//
-//    }
-//
-//    private String getFirebaseToken(long userId) {
-//        String key = getString(R.string.jwt_key);
-//        long iat = System.currentTimeMillis();
-//        Map<String, Object> claim = new HashMap<>();
-//        claim.put("alg", "RS256");
-//        claim.put("iss", "ghkdwnsghd1@gmail.com");
-//        claim.put("sub", "ghkdwnsghd1@gmail.com");
-//        claim.put("aud", "\"https://identitytoolkit.googleapis.com/google.identity.identitytoolkit.v1.IdentityToolkit\"");
-//        claim.put("iat", iat);
-//        claim.put("exp", iat + 3600000);
-//        claim.put("uid", userId);
-//        String token = Jwts.builder().addClaims(claim).signWith(SignatureAlgorithm.RS256, key).compact();
-//        return token;
-//
-//    }
-
-
-//    public void facebookLoginOnClick() {
-//        FacebookSdk.sdkInitialize(getApplicationContext());
-//        callbackManager = CallbackManager.Factory.create();
-//
-//        LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this,
-//                Arrays.asList("public_profile", "email"));
-//        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-//
-//            @Override
-//            public void onSuccess(final LoginResult result) {
-//
-//                GraphRequest request;
-//                request = GraphRequest.newMeRequest(result.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
-//
-//                    @Override
-//                    public void onCompleted(JSONObject user, GraphResponse response) {
-//                        if (response.getError() == null) {
-//                            Log.i("TAG", "user: " + user.toString());
-//                            Log.i("TAG", "AccessToken: " + result.getAccessToken().getToken());
-//                            try {
-//                                String id = user.getString("id");
-//                                String name = user.getString("name");
-//                                String email = user.getString("email");
-//                                AccessToken accessToken = result.getAccessToken();
-//                                handleFacebookAccessToken(accessToken);
-//
-//
-//                            } catch (JSONException e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
-//                    }
-//                });
-//                Bundle parameters = new Bundle();
-//                parameters.putString("fields", "id,name,email");
-//                request.setParameters(parameters);
-//                request.executeAsync();
-//            }
-//
-//            @Override
-//            public void onError(FacebookException error) {
-//                Log.e("test", "Error: " + error);
-//                //finish();
-//            }
-//
-//            @Override
-//            public void onCancel() {
-//                //finish();
-//            }
-//        });
-//    }
-
-
-    private void handleFacebookAccessToken(AccessToken token) {
+    private void handleFacebookAccessToken(AccessToken token, final boolean isMember) {
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            if (isMember) {
+                                FirebaseData firebaseData = new FirebaseData();
+                                firebaseData.setDataCallback(LoginActivity.this);
 
-                            FirebaseData firebaseData = new FirebaseData();
-                            firebaseData.setDataCallback(LoginActivity.this);
+                                String uid = mAuth.getCurrentUser().getUid();
 
-                            String uid = mAuth.getCurrentUser().getUid();
+                                Profile profile = Profile.getCurrentProfile();
+                                UserModel userModel = new UserModel();
 
-                            Profile profile = Profile.getCurrentProfile();
-                            UserModel userModel = new UserModel();
+                                userModel.setName(profile.getName());
+                                userModel.setProfileUrl(profile.getProfilePictureUri(300, 300).toString());
+                                firebaseData.userDataUpload(uid, userModel);
 
-                            userModel.setName(profile.getName());
-                            userModel.setProfileUrl(profile.getProfilePictureUri(300, 300).toString());
-                            firebaseData.userDataUpload(uid, userModel);
 
-                            SharedPreference sharedPreference = new SharedPreference();
-                            sharedPreference.put(LoginActivity.this, "userName", userModel.getName());
-                            sharedPreference.put(LoginActivity.this, "profileUrl", userModel.getProfileUrl());
+                                SharedPreference sharedPreference = new SharedPreference();
+                                sharedPreference.put(LoginActivity.this, "userName", userModel.getName());
+                                sharedPreference.put(LoginActivity.this, "profileUrl", userModel.getProfileUrl());
+                                sharedPreference.put(LoginActivity.this, "loginUserInfo", 0);
+
+                            } else {
+
+                                LoadingProgress.dismissDialog();
+                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
 
 
                         } else {
@@ -334,7 +177,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onSuccess(LoginResult loginResult) {
-        handleFacebookAccessToken(loginResult.getAccessToken());
+        handleFacebookAccessToken(loginResult.getAccessToken(), false);
     }
 
     @Override
@@ -371,19 +214,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
 
-                            FirebaseData firebaseData = new FirebaseData();
-                            firebaseData.setDataCallback(LoginActivity.this);
+                            LoadingProgress.dismissDialog();
 
-                            String uid = mAuth.getCurrentUser().getUid();
+                            int checkLogin = 1;
+                            sharedPreference.put(LoginActivity.this, "checklogin", checkLogin);
+                            sharedPreference.put(LoginActivity.this, "loginUserInfo", 201);
 
-                            UserModel userModel = new UserModel();
-                            userModel.setName("아무개");
-                            userModel.setProfileUrl("https://image.flaticon.com/icons/svg/149/149452.svg");
-                            firebaseData.userDataUpload(uid, userModel);
-
-                            SharedPreference sharedPreference = new SharedPreference();
-                            sharedPreference.put(LoginActivity.this, "userName", userModel.getName());
-                            sharedPreference.put(LoginActivity.this, "profileUrl", userModel.getProfileUrl());
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            startActivity(intent);
+                            finish();
 
 
                         } else {
@@ -418,7 +257,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             }
                         } else {
                             LoadingProgress.dismissDialog();
-                            Toast.makeText(LoginActivity.this, "아이디가 존재하지 않습니다.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this, "오류 발생 다시 시도해 주세요", Toast.LENGTH_SHORT).show();
 
                         }
                     }

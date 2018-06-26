@@ -19,11 +19,13 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.GenericTransitionOptions;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -31,42 +33,34 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
-import com.project.hong.saying.DataBase.FirebaseData;
 import com.project.hong.saying.DataModel.CommentModel;
 import com.project.hong.saying.DataModel.FeedModel;
 import com.project.hong.saying.DataModel.UserModel;
 import com.project.hong.saying.Util.LayoutToImage;
 import com.project.hong.saying.Util.LoadingProgress;
+import com.project.hong.saying.Util.SharedPreference;
 
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class SayDetailActivity extends AppCompatActivity implements View.OnClickListener, LayoutToImage.SaveImageCallback {
+public class SayDetailActivity extends AppCompatActivity implements View.OnClickListener, LayoutToImage.SaveImageCallback,
+        ChildEventListener {
 
     private FeedModel feedModel;
-    private ImageView imageView, shareBt, openCloseArrow, shadow, likeBt, scrapBt;
+    private ImageView imageView, shareBt, openCloseArrow, shadow, scrapBt, chatBt;
     private CircleImageView profileImage;
-    private TextView userName, say;
+    private TextView userName, say, replyCount, time;
     private RelativeLayout openClose, bottomSheet, backBt;
     private RequestOptions options = new RequestOptions();
     private BottomSheetBehavior bottomSheetBehavior;
     private CardView cardView;
-    private String key, uid;
-//    private boolean buttonClick = false;
+    private String key, uid, userNameSt, profileUrl;
 
     private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
-    private DatabaseReference reference, myDatabase;
+    private DatabaseReference reference, myDatabase, commentData;
     private int position;
-
-
-
-
-
-
-
-
 
 
     private RelativeLayout commentSendBt;
@@ -75,7 +69,6 @@ public class SayDetailActivity extends AppCompatActivity implements View.OnClick
     private EditText commentEdit;
     private ArrayList<CommentModel> commentModels = new ArrayList<>();
     private CommentModel commentModel = new CommentModel();
-    private DatabaseReference commentbase;
 
 
     @Override
@@ -87,6 +80,7 @@ public class SayDetailActivity extends AppCompatActivity implements View.OnClick
         initView();
         setScrapBt();
         setData();
+        setCommentRecycler();
 
     }
 
@@ -102,8 +96,11 @@ public class SayDetailActivity extends AppCompatActivity implements View.OnClick
         shadow = findViewById(R.id.shadow);
         say = findViewById(R.id.say);
         cardView = findViewById(R.id.card_view);
-        likeBt = findViewById(R.id.like_bt);
         scrapBt = findViewById(R.id.scrap_bt);
+        replyCount = findViewById(R.id.reply_count);
+        chatBt = findViewById(R.id.reply_bt);
+        time = findViewById(R.id.time);
+
 
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
         bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
@@ -126,21 +123,25 @@ public class SayDetailActivity extends AppCompatActivity implements View.OnClick
         backBt.setOnClickListener(this);
         openClose.setOnClickListener(this);
         shareBt.setOnClickListener(this);
-        likeBt.setOnClickListener(this);
         scrapBt.setOnClickListener(this);
-
-
-
-
-
-
+        chatBt.setOnClickListener(this);
 
         commentSendBt = findViewById(R.id.send_comment);
         commentEdit = findViewById(R.id.comment_edit);
         commentRecycler = findViewById(R.id.comment_recycler);
         commentSendBt.setOnClickListener(this);
+
     }
 
+
+    private void setCommentRecycler() {
+        adapter = new CommentAdapter(this, commentModels);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        commentRecycler.setLayoutManager(layoutManager);
+        commentRecycler.setAdapter(adapter);
+
+    }
 
     private void getData() {
         feedModel = (FeedModel) getIntent().getExtras().get("feedData");
@@ -149,7 +150,19 @@ public class SayDetailActivity extends AppCompatActivity implements View.OnClick
         reference = database.getReference().child("feed").child(key);
         uid = firebaseAuth.getCurrentUser().getUid();
         myDatabase = database.getReference().child("user").child(uid);
-        commentbase = database.getReference().child("user").child(key).child("comment");
+        commentData = database.getReference().child("feed").child(key);
+        commentData.child("comment").orderByKey().addChildEventListener(this);
+
+        SharedPreference sharedPreference = new SharedPreference();
+        userNameSt = sharedPreference.getValue(this, "userName", "");
+        profileUrl = sharedPreference.getValue(this, "profileUrl", "");
+
+    }
+
+
+    private void uploadComment(String comment) {
+        CommentModel commentModel = new CommentModel(profileUrl, userNameSt, comment);
+        reference.child("comment").push().setValue(commentModel);
 
     }
 
@@ -167,6 +180,8 @@ public class SayDetailActivity extends AppCompatActivity implements View.OnClick
         say.setText(feedModel.getContents());
         say.setTextColor(Color.parseColor("#" + feedModel.getTextColor()));
         say.setGravity(feedModel.getGravity());
+        //TODO 실시간으로 어떻게 해줘야할까..
+        time.setText(feedModel.getTime());
 
 
     }
@@ -175,6 +190,7 @@ public class SayDetailActivity extends AppCompatActivity implements View.OnClick
         if (feedModel.getScrap() != null) {
             boolean isScraped = feedModel.getScrap().contains(uid);
             scrapBt.setSelected(isScraped);
+
         }
 
     }
@@ -249,9 +265,23 @@ public class SayDetailActivity extends AppCompatActivity implements View.OnClick
     }
 
 
+
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.reply_bt:
+                switch (bottomSheetBehavior.getState()) {
+                    case BottomSheetBehavior.STATE_EXPANDED:
+                        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                        break;
+                    case BottomSheetBehavior.STATE_COLLAPSED:
+                        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                        break;
+
+                }
+                break;
+
             case R.id.back_bt:
                 onBackPressed();
                 break;
@@ -279,7 +309,12 @@ public class SayDetailActivity extends AppCompatActivity implements View.OnClick
 
 
             case R.id.send_comment:
-
+                String comments = commentEdit.getText().toString();
+                if (!comments.trim().isEmpty()) {
+                    uploadComment(comments);
+                } else {
+                    Toast.makeText(this, "메시지를 입력해 주세요", Toast.LENGTH_SHORT).show();
+                }
 
                 break;
         }
@@ -353,9 +388,39 @@ public class SayDetailActivity extends AppCompatActivity implements View.OnClick
     }
 
 
+    @Override
+    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+        CommentModel commentModel = dataSnapshot.getValue(CommentModel.class);
+        commentModels.add(commentModel);
+        adapter.notifyItemInserted(commentModels.size() - 1);
+
+    }
+
+    @Override
+    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+    }
+
+    @Override
+    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+    }
+
+    @Override
+    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+    }
+
+    @Override
+    public void onCancelled(DatabaseError databaseError) {
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        commentData.removeEventListener(this);
 
 
-
-
-
+    }
 }
