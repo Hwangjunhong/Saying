@@ -45,7 +45,7 @@ dependencies {
     implementation 'com.ToxicBakery.viewpager.transforms:view-pager-transforms:1.2.32@aar'
     implementation 'com.rengwuxian.materialedittext:library:2.1.4'
     implementation 'com.google.firebase:firebase-ads:11.6.2'
-    implementation 'com.github.EdgeJH:AudienceHelperAdapter:1.0.0'
+    implementation 'com.github.EdgeJH:AudienceHelperAdapter:1.0.3'
     implementation 'com.facebook.android:audience-network-sdk:4.99.0'
     implementation 'com.google.firebase:firebase-messaging:11.6.2'
 }

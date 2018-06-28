@@ -35,7 +35,6 @@
                 android:textColor="@android:color/black"
                 tools:text="Hwang. J. H." />
 
-
         </LinearLayout>
 
         <RelativeLayout

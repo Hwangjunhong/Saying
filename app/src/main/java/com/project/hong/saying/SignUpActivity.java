@@ -22,11 +22,11 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 
 public class SignUpActivity extends AppCompatActivity implements View.OnClickListener, DataCallback {
 
-    FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    MaterialEditText editEmail, editPw, editName, editPwOk;
-    Button signUpBt;
-    RelativeLayout BackBt;
-    SharedPreference sharedPreference = new SharedPreference();
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private MaterialEditText editEmail, editPw, editName, editPwOk;
+    private Button signUpBt;
+    private RelativeLayout BackBt;
+    private SharedPreference sharedPreference = new SharedPreference();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,8 +69,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
                             sharedPreference.put(SignUpActivity.this, "userName", editName.getText().toString());
 
-//                            sharedPreference.put(SignUpActivity.this, "userEmail", editEmail.getText().toString());
-//                            sharedPreference.put(SignUpActivity.this, "userPwd", editPw.getText().toString());
+                            sharedPreference.put(SignUpActivity.this, "userPwd", editPw.getText().toString());
 
 
                         } else {
@@ -91,7 +90,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                 if (!editEmail.getText().toString().trim().isEmpty() && !editPw.getText().toString().trim().isEmpty()
                         && !editName.getText().toString().trim().isEmpty() && !editPwOk.getText().toString().trim().isEmpty()) {
 
-                    if(editPw.getText().length() > 7 && editPwOk.getText().length() > 7){
+                    if (editPw.getText().length() > 7 && editPwOk.getText().length() > 7) {
                         if (editPw.getText().toString().equals(editPwOk.getText().toString())) {
                             LoadingProgress.showDialog(this);
                             createUser(editEmail.getText().toString(), editPw.getText().toString());
@@ -113,9 +112,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
 
             case R.id.back_bt:
-                Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
-                startActivity(intent);
-                finish();
+                onBackPressed();
                 break;
         }
 
@@ -132,5 +129,15 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             startActivity(intent);
             finish();
         }
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        finish();
+
     }
 }

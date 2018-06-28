@@ -13,23 +13,45 @@
         android:orientation="vertical">
 
         <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:contentInsetStart="0dp">
 
             <RelativeLayout
-                android:id="@+id/back_bt"
-                android:layout_width="?attr/actionBarSize"
-                android:layout_height="match_parent">
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize">
 
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_centerInParent="true"
-                    android:src="@drawable/back" />
 
+                <RelativeLayout
+                    android:id="@+id/back_bt"
+                    android:layout_width="?attr/actionBarSize"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_centerInParent="true"
+                        android:src="@drawable/back" />
+
+                </RelativeLayout>
+
+                <!--<RelativeLayout-->
+                    <!--android:id="@+id/feed_setting"-->
+                    <!--android:layout_width="50dp"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:layout_alignParentEnd="true">-->
+
+                    <!--<ImageView-->
+                        <!--android:layout_width="20dp"-->
+                        <!--android:layout_height="20dp"-->
+                        <!--android:layout_centerInParent="true"-->
+                        <!--android:src="@drawable/threedots" />-->
+
+                <!--</RelativeLayout>-->
 
             </RelativeLayout>
+
         </android.support.v7.widget.Toolbar>
 
         <ScrollView
@@ -83,14 +105,13 @@
                     android:id="@+id/time"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="시간"
                     android:layout_marginStart="5dp"
-                    android:layout_marginTop="10dp"/>
+                    android:layout_marginTop="10dp"
+                    android:text="시간" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    >
+                    android:layout_height="wrap_content">
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/profile_image"
@@ -188,7 +209,8 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="5dp"
-                android:layout_toRightOf="@+id/reply" />
+                android:layout_toRightOf="@+id/reply"
+                android:text="(0)" />
 
 
             <ImageView
@@ -213,8 +235,8 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="0.2dp"
-            android:background="#80808080"
-            android:layout_above="@+id/comment_layout"/>
+            android:layout_above="@+id/comment_layout"
+            android:background="#80808080" />
 
         <LinearLayout
             android:id="@+id/comment_layout"

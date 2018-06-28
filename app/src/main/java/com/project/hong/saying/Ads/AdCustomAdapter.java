@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.GenericTransitionOptions;
@@ -19,9 +20,11 @@ import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.request.RequestOptions;
 import com.edge.fbadhelper.FBAdapterSetting;
 import com.edge.fbadhelper.FBCustomAdapter;
+import com.facebook.ads.AdIconView;
 import com.facebook.ads.MediaView;
 import com.facebook.ads.NativeAd;
 import com.project.hong.saying.DataModel.FeedModel;
+import com.project.hong.saying.DataModel.SayFeedModel;
 import com.project.hong.saying.MainActivity;
 import com.project.hong.saying.R;
 import com.project.hong.saying.SayDetailActivity;
@@ -37,7 +40,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class AdCustomAdapter extends FBCustomAdapter<AdCustomAdapter.MyHolder, AdCustomAdapter.AdHolder> {
     private Context context;
-    private ArrayList<FeedModel> feedModels = new ArrayList<>();
+    private ArrayList<SayFeedModel> feedModels = new ArrayList<>();
     private FeedModel item;
     private RequestManager requestManager;
     private static final int VIEW_LEFT = 0;
@@ -46,18 +49,16 @@ public class AdCustomAdapter extends FBCustomAdapter<AdCustomAdapter.MyHolder, A
     private RequestOptions options = new RequestOptions();
 
     private Typeface typeface;
-    private ArrayList<String> keyList = new ArrayList<>();
 
-    public AdCustomAdapter(Context context, ArrayList<FeedModel> feedModels, ArrayList<String> keyList, FBAdapterSetting setting) {
+    public AdCustomAdapter(Context context, ArrayList<SayFeedModel> feedModels, FBAdapterSetting setting) {
         super(context, feedModels, setting);
         this.context = context;
         this.feedModels = feedModels;
-        this.keyList = keyList;
         requestManager = Glide.with(context);
         typeface = Typeface.createFromAsset(context.getAssets(), "조선일보명조.ttf");
         options.error(R.drawable.user1);
         options.placeholder(R.drawable.user1);
-        
+
     }
 
 
@@ -86,7 +87,7 @@ public class AdCustomAdapter extends FBCustomAdapter<AdCustomAdapter.MyHolder, A
 
     @Override
     public void onBindMyViewHolder(MyHolder holder, int position) {
-        item = feedModels.get(position);
+        item = feedModels.get(position).getFeedModel();
         requestManager.load(item.getImageUrl()).transition(GenericTransitionOptions.with(R.anim.alpha_anim)).into(holder.feedImage);
         requestManager.load(item.getProfileUrl()).apply(options).into(holder.profileImage);
         holder.contents.setText(item.getContents());
@@ -143,29 +144,29 @@ public class AdCustomAdapter extends FBCustomAdapter<AdCustomAdapter.MyHolder, A
         @Override
         public void onClick(View v) {
             int position = (int) itemView.getTag();
-            FeedModel model = feedModels.get(position);
-            String key = keyList.get(position);
+            FeedModel model = feedModels.get(position).getFeedModel();
 
             Intent intent = new Intent(context, SayDetailActivity.class);
             Bundle bundle = new Bundle();
             bundle.putSerializable("feedData", model);
             intent.putExtras(bundle);
-            intent.putExtra("position" , position);
-            intent.putExtra("feedKey", key);
-            if(context instanceof MainActivity){
-                ((MainActivity)context).startActivityForResult(intent, 100);
+            intent.putExtra("position", position);
+            intent.putExtra("feedKey", feedModels.get(position).getKey());
+            if (context instanceof MainActivity) {
+                ((MainActivity) context).startActivityForResult(intent, 100);
             }
         }
     }
 
     class AdHolder extends RecyclerView.ViewHolder {
         private MediaView mAdMedia;
-        private ImageView mAdIcon;
+        private AdIconView mAdIcon;
         private TextView mAdTitle;
         private TextView mAdBody;
         private TextView mAdSocialContext;
         private Button mAdCallToAction;
-
+        LinearLayout container;
+        List<View> clickableViews = new ArrayList<>();
         public AdHolder(View view) {
             super(view);
 
@@ -173,8 +174,12 @@ public class AdCustomAdapter extends FBCustomAdapter<AdCustomAdapter.MyHolder, A
             mAdTitle = (TextView) view.findViewById(R.id.native_ad_title);
             mAdBody = (TextView) view.findViewById(R.id.native_ad_body);
             mAdSocialContext = (TextView) view.findViewById(R.id.native_ad_social_context);
-            mAdCallToAction = (Button) view.findViewById(R.id.native_ad_call_to_action);
-            mAdIcon = (ImageView) view.findViewById(R.id.native_ad_icon);
+            mAdCallToAction = (Button)view.findViewById(R.id.native_ad_call_to_action);
+            mAdIcon = view.findViewById(R.id.native_ad_icon);
+            mAdMedia = view.findViewById(R.id.native_ad_media);
+            container= view.findViewById(R.id.ad_choices_container);
+            clickableViews.add(mAdMedia);
+            clickableViews.add(mAdCallToAction);
 
         }
 
@@ -182,27 +187,28 @@ public class AdCustomAdapter extends FBCustomAdapter<AdCustomAdapter.MyHolder, A
             if (ad == null) {
                 mAdTitle.setText("No Ad");
                 mAdBody.setText("Ad is not loaded.");
-            } else {
+            }
+            else {
                 mAdTitle.setText(ad.getAdvertiserName());
                 mAdBody.setText(ad.getAdBodyText());
                 mAdSocialContext.setText(ad.getAdSocialContext());
                 mAdCallToAction.setText(ad.getAdCallToAction());
-                ad.unregisterView();
-
-
-                ad.downloadMedia();
-
-                List<View> clickableViews = new ArrayList<>();
-                clickableViews.add(mAdTitle);
-                clickableViews.add(mAdCallToAction);
-
-                // Register the Title and CTA button to listen for clicks.
-                ad.registerViewForInteraction(
-                        mAdCallToAction,
-                        (MediaView) clickableViews);
+                ad.registerViewForInteraction(container, mAdMedia,mAdIcon,clickableViews);
             }
         }
-
-
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

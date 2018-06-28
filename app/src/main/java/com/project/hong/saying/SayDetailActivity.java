@@ -13,7 +13,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -41,6 +44,7 @@ import com.project.hong.saying.Util.LoadingProgress;
 import com.project.hong.saying.Util.SharedPreference;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -61,7 +65,7 @@ public class SayDetailActivity extends AppCompatActivity implements View.OnClick
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference reference, myDatabase, commentData;
     private int position;
-
+    private Toolbar toolbar;
 
     private RelativeLayout commentSendBt;
     private RecyclerView commentRecycler;
@@ -69,6 +73,7 @@ public class SayDetailActivity extends AppCompatActivity implements View.OnClick
     private EditText commentEdit;
     private ArrayList<CommentModel> commentModels = new ArrayList<>();
     private CommentModel commentModel = new CommentModel();
+    private ArrayList<String> keyList = new ArrayList<>();
 
 
     @Override
@@ -100,7 +105,8 @@ public class SayDetailActivity extends AppCompatActivity implements View.OnClick
         replyCount = findViewById(R.id.reply_count);
         chatBt = findViewById(R.id.reply_bt);
         time = findViewById(R.id.time);
-
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
         bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
@@ -135,7 +141,7 @@ public class SayDetailActivity extends AppCompatActivity implements View.OnClick
 
 
     private void setCommentRecycler() {
-        adapter = new CommentAdapter(this, commentModels);
+        adapter = new CommentAdapter(this, commentModels, keyList, key);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         commentRecycler.setLayoutManager(layoutManager);
@@ -144,6 +150,7 @@ public class SayDetailActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void getData() {
+
         feedModel = (FeedModel) getIntent().getExtras().get("feedData");
         position = getIntent().getIntExtra("position", 0);
         key = getIntent().getStringExtra("feedKey");
@@ -156,12 +163,18 @@ public class SayDetailActivity extends AppCompatActivity implements View.OnClick
         SharedPreference sharedPreference = new SharedPreference();
         userNameSt = sharedPreference.getValue(this, "userName", "");
         profileUrl = sharedPreference.getValue(this, "profileUrl", "");
+        sharedPreference.put(this, "removeKey", key);
+
 
     }
 
 
     private void uploadComment(String comment) {
-        CommentModel commentModel = new CommentModel(profileUrl, userNameSt, comment);
+//        SharedPreference sharedPreference = new SharedPreference();
+//        String commentKey = sharedPreference.getValue(this, "commentKey", "");
+//        reference.child("comment").child(commentKey).push().setValue(commentModel);
+
+        CommentModel commentModel = new CommentModel(profileUrl, userNameSt, comment, uid, System.currentTimeMillis());
         reference.child("comment").push().setValue(commentModel);
 
     }
@@ -180,11 +193,43 @@ public class SayDetailActivity extends AppCompatActivity implements View.OnClick
         say.setText(feedModel.getContents());
         say.setTextColor(Color.parseColor("#" + feedModel.getTextColor()));
         say.setGravity(feedModel.getGravity());
-        //TODO 실시간으로 어떻게 해줘야할까..
-        time.setText(feedModel.getTime());
+
+        Date date = new Date();
+        date.setTime(feedModel.getTime());
+        time.setText(formatTimeString(date));
 
 
     }
+
+    private static class TIME_MAXIMUM {
+        public static final int SEC = 60;
+        public static final int MIN = 60;
+        public static final int DAY = 30;
+        public static final int HOUR = 24;
+        public static final int MONTH = 12;
+    }
+
+    public static String formatTimeString(Date date) {
+        long curTime = System.currentTimeMillis();
+        long regTime = date.getTime();
+        long diffTime = (curTime - regTime) / 1000;
+        String msg = null;
+        if (diffTime < TIME_MAXIMUM.SEC) {
+            msg = "방금 전";
+        } else if ((diffTime /= TIME_MAXIMUM.SEC) < TIME_MAXIMUM.MIN) {
+            msg = diffTime + "분 전";
+        } else if ((diffTime /= TIME_MAXIMUM.MIN) < TIME_MAXIMUM.HOUR) {
+            msg = (diffTime) + "시간 전";
+        } else if ((diffTime /= TIME_MAXIMUM.HOUR) < TIME_MAXIMUM.DAY) {
+            msg = (diffTime) + "일 전";
+        } else if ((diffTime /= TIME_MAXIMUM.DAY) < TIME_MAXIMUM.MONTH) {
+            msg = (diffTime) + "달 전";
+        } else {
+            msg = (diffTime) + "년 전";
+        }
+        return msg;
+    }
+
 
     private void setScrapBt() {
         if (feedModel.getScrap() != null) {
@@ -229,28 +274,30 @@ public class SayDetailActivity extends AppCompatActivity implements View.OnClick
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
                 feedModel = mutableData.getValue(FeedModel.class);
-                if (feedModel.getScrap() != null) {
+                if (!feedModel.getUserKey().equals(firebaseAuth.getCurrentUser().getUid())) {
+                    if (feedModel.getScrap() != null) {
 
-                    if (feedModel.getScrap().contains(firebaseAuth.getCurrentUser().getUid())) {
-                        int position = feedModel.getScrap().indexOf(firebaseAuth.getCurrentUser().getUid());
-                        feedModel.getScrap().remove(position);
-                        scrapBt.setSelected(false);
+                        if (feedModel.getScrap().contains(firebaseAuth.getCurrentUser().getUid())) {
+                            int position = feedModel.getScrap().indexOf(firebaseAuth.getCurrentUser().getUid());
+                            feedModel.getScrap().remove(position);
+                            scrapBt.setSelected(false);
+
+                        } else {
+                            feedModel.getScrap().add(firebaseAuth.getCurrentUser().getUid());
+                            scrapBt.setSelected(true);
+
+                        }
 
                     } else {
+                        feedModel.setScrap(new ArrayList<String>());
                         feedModel.getScrap().add(firebaseAuth.getCurrentUser().getUid());
                         scrapBt.setSelected(true);
-
                     }
 
-                } else {
-                    feedModel.setScrap(new ArrayList<String>());
-                    feedModel.getScrap().add(firebaseAuth.getCurrentUser().getUid());
-                    scrapBt.setSelected(true);
+                    saveMyScrap(myDatabase);
+                    mutableData.setValue(feedModel);
+
                 }
-
-                saveMyScrap(myDatabase);
-                mutableData.setValue(feedModel);
-
                 return Transaction.success(mutableData);
             }
 
@@ -263,8 +310,6 @@ public class SayDetailActivity extends AppCompatActivity implements View.OnClick
             }
         });
     }
-
-
 
 
     @Override
@@ -392,7 +437,10 @@ public class SayDetailActivity extends AppCompatActivity implements View.OnClick
     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
         CommentModel commentModel = dataSnapshot.getValue(CommentModel.class);
         commentModels.add(commentModel);
+        keyList.add(dataSnapshot.getKey());
+
         adapter.notifyItemInserted(commentModels.size() - 1);
+        replyCount.setText("(" + commentModels.size() + ")");
 
     }
 
@@ -421,6 +469,37 @@ public class SayDetailActivity extends AppCompatActivity implements View.OnClick
         super.onDestroy();
         commentData.removeEventListener(this);
 
+    }
 
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (feedModel.getUserKey().equals(firebaseAuth.getCurrentUser().getUid())) {
+            getMenuInflater().inflate(R.menu.my_feed_menu, menu);
+        } else {
+            getMenuInflater().inflate(R.menu.other_feed_menu, menu);
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.bt_remove:
+                if (feedModel.getUserKey().equals(firebaseAuth.getCurrentUser().getUid())) {
+                    reference.removeValue();
+
+                    Intent intent = new Intent(SayDetailActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+
+                }
+                break;
+            case R.id.bt_report:
+                break;
+
+        }
+        return true;
     }
 }

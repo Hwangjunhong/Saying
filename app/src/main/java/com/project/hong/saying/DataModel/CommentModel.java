@@ -11,15 +11,18 @@ public class CommentModel implements Serializable{
     private String profileUrl;
     private String name;
     private String comment;
-    private ArrayList<String> like;
+    private String userKey;
+    private long time;
 
     public CommentModel() {
     }
 
-    public CommentModel(String profileUrl, String name, String comment) {
+    public CommentModel(String profileUrl, String name, String comment, String userKey, long time) {
         this.profileUrl = profileUrl;
         this.name = name;
         this.comment = comment;
+        this.userKey = userKey;
+        this.time = time;
     }
 
     public String getProfileUrl() {
@@ -46,11 +49,19 @@ public class CommentModel implements Serializable{
         this.comment = comment;
     }
 
-    public ArrayList<String> getLike() {
-        return like;
+    public String getUserKey() {
+        return userKey;
     }
 
-    public void setLike(ArrayList<String> like) {
-        this.like = like;
+    public void setUserKey(String userKey) {
+        this.userKey = userKey;
+    }
+
+    public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
     }
 }

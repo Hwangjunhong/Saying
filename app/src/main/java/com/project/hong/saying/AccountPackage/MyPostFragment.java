@@ -69,7 +69,6 @@ public class MyPostFragment extends Fragment{
         feedModels.add(0, feedModel);
         keyList.add(0, key);
         adapter.notifyItemChanged(feedModels.size() - 1);
-
     }
 
     @Override

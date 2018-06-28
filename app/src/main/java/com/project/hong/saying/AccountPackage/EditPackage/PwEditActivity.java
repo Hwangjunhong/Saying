@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.project.hong.saying.DataModel.UserModel;
@@ -32,7 +33,7 @@ public class PwEditActivity extends AppCompatActivity implements View.OnClickLis
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference reference = database.getReference().child("user");
-    private String uid, pwd, originPwd, changePwd, changeOkPwd;
+    private String uid, pwd, originPwd, changePwd, changeOkPwd, originCheckPwd;
     private EditText originPw, changePw, changeOkPw;
     private TextView completeBt;
     private SharedPreference sharedPreference = new SharedPreference();
@@ -65,30 +66,30 @@ public class PwEditActivity extends AppCompatActivity implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.complete_bt:
-                originPwd = originPw.getText().toString();
+
+                originPwd = sharedPreference.getValue(this, "userPwd", "");
+                originCheckPwd = originPw.getText().toString();
                 changePwd = changePw.getText().toString();
                 changeOkPwd = changeOkPw.getText().toString();
 
-//                if (!originPwd.trim().isEmpty() && !changePwd.trim().isEmpty() && !changeOkPwd.trim().isEmpty()) {
-//
-//                    //TODO  java.lang.NullPointerException: Attempt to invoke virtual method 'boolean java.lang.String.equals(java.lang.Object)' on a null object reference
-//
-//                    if (userModel.getPassword().equals(originPwd)) {
-//                        if (changePwd.equals(changeOkPwd)) {
-//                            LoadingProgress.showDialog(this, true);
-//                            changePassword();
-//                        } else {
-//                            Toast.makeText(this, "비밀번호가 일치하지 않습니다", Toast.LENGTH_SHORT).show();
-//                        }
-//
-//                    } else {
-//                        Toast.makeText(this, "기존의 비밀번호와 일치하지 않습니다", Toast.LENGTH_SHORT).show();
-//                    }
-//
-//                } else {
-//                    Toast.makeText(this, "정보를 입력해 주세요", Toast.LENGTH_SHORT).show();
-//                }
-//                break;
+                if (!originCheckPwd.trim().isEmpty() && !changePwd.trim().isEmpty() && !changeOkPwd.trim().isEmpty()) {
+
+                    if (originCheckPwd.equals(originPwd)) {
+                        if (changePwd.equals(changeOkPwd)) {
+                            LoadingProgress.showDialog(this, true);
+                            changePassword();
+                        } else {
+                            Toast.makeText(this, "변경할 비밀번호가 일치하지 않습니다", Toast.LENGTH_SHORT).show();
+                        }
+
+                    } else {
+                        Toast.makeText(this, "기존의 비밀번호와 일치하지 않습니다", Toast.LENGTH_SHORT).show();
+                    }
+
+                } else {
+                    Toast.makeText(this, "정보를 입력해 주세요", Toast.LENGTH_SHORT).show();
+                }
+                break;
 
 
             case R.id.back_bt:
@@ -117,10 +118,29 @@ public class PwEditActivity extends AppCompatActivity implements View.OnClickLis
     public void onComplete(@NonNull Task<Void> task) {
         LoadingProgress.dismissDialog();
         if (task.isSuccessful()) {
-            finish();
+            sharedPreference.put(this, "userPwd", changePwd);
+            firebaseUpdatePassword(changePwd);
+
         } else {
             Toast.makeText(this, "회원 정보 수정 실패", Toast.LENGTH_SHORT).show();
         }
+    }
+
+
+    private void firebaseUpdatePassword(String newPassword) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        user.updatePassword(newPassword)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(PwEditActivity.this, "비밀번호가 성공적으로 변경되었습니다", Toast.LENGTH_SHORT).show();
+                            finish();
+
+                        }
+                    }
+                });
     }
 
 

@@ -58,14 +58,46 @@
         android:layout_marginEnd="20dp"
         android:layout_marginTop="10dp">
 
+        <ImageView
+            android:id="@+id/scrap_bt"
+            android:layout_width="23dp"
+            android:layout_height="23dp"
+            android:layout_margin="2dp"
+            android:padding="3dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/bookmark_bt" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#999"
-            android:text="스크랩 수 : 20"
+            android:text="20"
+            android:textSize="14dp"
+            android:layout_marginEnd="10dp"
+            android:layout_centerVertical="true"
+            android:id="@+id/scrap_count"
+            android:layout_toRightOf="@+id/scrap_bt"/>
+
+
+        <ImageView
+            android:id="@+id/reply_bt"
+            android:layout_width="23dp"
+            android:layout_height="23dp"
+            android:layout_margin="2dp"
+            android:padding="3dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/circlechat"
+            android:layout_toRightOf="@+id/scrap_count"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#999"
+            android:text="20"
             android:textSize="14dp"
             android:layout_centerVertical="true"
-            android:id="@+id/scrap_count"/>
+            android:id="@+id/reply_count"
+            android:layout_toRightOf="@+id/reply_bt"/>
 
         <TextView
             android:layout_width="wrap_content"

@@ -10,8 +10,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.ToxicBakery.viewpager.transforms.CubeOutTransformer;
-import com.google.firebase.auth.FirebaseAuth;
 import com.project.hong.saying.AccountPackage.AccountFragment;
+import com.project.hong.saying.Ads.AdsSayFragment;
 import com.project.hong.saying.DataModel.FeedModel;
 
 public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener,

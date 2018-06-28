@@ -20,6 +20,8 @@ import com.facebook.Profile;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -45,7 +47,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private CallbackManager callbackManager;
     private LoginButton facebookBt;
-    SharedPreference sharedPreference = new SharedPreference();
+    private SharedPreference sharedPreference = new SharedPreference();
 
     private MaterialEditText editEmail, editPw;
     private String uid;
@@ -103,7 +105,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 //                String email = sharedPreference.getValue(this, "userEmail", "");
 //                String pwd = sharedPreference.getValue(this, "userPwd", "");
 
-                // TODO: 2018-06-19  로그인 회원 이메일 정보, 비밀번호 정보 받아와야됨. 야매로 해도 비밀번호 해결이 안됨.
 
                 if (!editEmail.getText().toString().trim().isEmpty() && !editPw.getText().toString().trim().isEmpty()) {
                     if (!TextUtils.isEmpty(editEmail.getText().toString()) && !TextUtils.isEmpty(editPw.getText().toString())) {
@@ -226,8 +227,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
 
                         } else {
-
-
+                            LoadingProgress.dismissDialog();
+                            Toast.makeText(LoginActivity.this, "비밀번호가 일치하지 않습니다", Toast.LENGTH_SHORT).show();
                         }
 
                         // ...
@@ -235,6 +236,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 });
 
     }
+
 
     private void performLoginOrAccountCreation(final String email, final String password) {
         mAuth.fetchProvidersForEmail(email).addOnCompleteListener(

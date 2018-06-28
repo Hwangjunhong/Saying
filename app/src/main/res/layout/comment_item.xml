@@ -1,57 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/commentItem_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_marginTop="10dp"
     android:layout_marginBottom="10dp"
-    android:id="@+id/commentItem_layout">
-
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/user_profile"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_gravity="top"
-        android:layout_marginBottom="5dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="5dp"
-        tools:src="@drawable/user1" />
+    android:layout_marginTop="10dp"
+    android:orientation="vertical"
+    android:background="@drawable/comment_item_clicked">
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_weight="1">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/user_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/user_profile"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_gravity="top"
-            android:layout_marginBottom="2dp"
-            android:layout_marginTop="2dp"
-            android:textColor="@android:color/black"
-            android:textStyle="bold" />
+            android:layout_marginBottom="5dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="5dp"
+            tools:src="@drawable/user1" />
 
-        <TextView
-            android:id="@+id/user_comment"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:ellipsize="marquee"
-            android:textColor="@android:color/black" />
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginEnd="40dp">
+
+            <TextView
+                android:id="@+id/user_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:layout_marginBottom="2dp"
+                android:layout_marginTop="2dp"
+                android:textColor="@android:color/black"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/user_comment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="marquee"
+                android:textColor="@android:color/black" />
+
+        </LinearLayout>
+
 
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/like_bt"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginEnd="10dp"
-        android:src="@drawable/like_bt"
-        android:padding="12dp"
-        android:layout_gravity="center" />
+    <TextView
+        android:id="@+id/time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="55dp"
+        android:layout_marginTop="3dp"
+        android:text="시간"
+        android:textSize="12dp"
+        android:textColor="#77000000"
 
-
+        />
 </LinearLayout>

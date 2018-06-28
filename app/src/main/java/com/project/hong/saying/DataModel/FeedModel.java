@@ -17,7 +17,7 @@ public class FeedModel implements Serializable {
     private int gravity;
     private String textColor;
     private String contents;
-    private String time;
+    private long time;
     private String userKey;
 
     HashMap<String, CommentModel> comment;
@@ -27,7 +27,7 @@ public class FeedModel implements Serializable {
     }
 
     public FeedModel(String imageUrl, String userName, String profileUrl, int gravity, String textColor, String contents,
-                     String time, String userKey) {
+                     long time, String userKey) {
         this.imageUrl = imageUrl;
         this.userName = userName;
         this.profileUrl = profileUrl;
@@ -38,11 +38,11 @@ public class FeedModel implements Serializable {
         this.userKey = userKey;
     }
 
-    public String getTime() {
+    public long getTime() {
         return time;
     }
 
-    public void setTime(String time) {
+    public void setTime(long time) {
         this.time = time;
     }
 
@@ -89,4 +89,7 @@ public class FeedModel implements Serializable {
     public void setComment(HashMap<String, CommentModel> comment) {
         this.comment = comment;
     }
+
+
+
 }

@@ -106,7 +106,7 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
     private String galleryUri;
     private String imageUrl;
 
-    Date date = new Date();
+    private Date date = new Date();
 
     Call<PixabayImage> getImage;
 
@@ -177,19 +177,18 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                 openFragment(imageFragment);
                 behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
-                //
-                getImage.cancel();
-                //
-
                 break;
+
             case R.id.text_location:
                 openFragment(gravityFragment);
                 behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 position = 2;
                 break;
+
             case R.id.back_bt:
                 finish();
                 break;
+
             case R.id.complete:
                 if (imageUrl == null) {
                     Toast.makeText(this, "이미지가 로딩중 입니다. \n잠시만 기다려주세요.", Toast.LENGTH_LONG).show();
@@ -203,34 +202,6 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    private static class TIME_MAXIMUM{
-        public static final int SEC = 60;
-        public static final int MIN = 60;
-        public static final int HOUR = 24;
-        public static final int DAY = 30;
-        public static final int MONTH = 12;
-    }
-
-    public static String formatTimeString(Date date) {
-        long curTime = System.currentTimeMillis();
-        long regTime = date.getTime();
-        long diffTime = (curTime - regTime) / 1000;
-        String msg = null;
-        if (diffTime < TIME_MAXIMUM.SEC) {
-            msg = "방금 전";
-        } else if ((diffTime /= TIME_MAXIMUM.SEC) < TIME_MAXIMUM.MIN) {
-            msg = diffTime + "분 전";
-        } else if ((diffTime /= TIME_MAXIMUM.MIN) < TIME_MAXIMUM.HOUR) {
-            msg = (diffTime) + "시간 전";
-        } else if ((diffTime /= TIME_MAXIMUM.HOUR) < TIME_MAXIMUM.DAY) {
-            msg = (diffTime) + "일 전";
-        } else if ((diffTime /= TIME_MAXIMUM.DAY) < TIME_MAXIMUM.MONTH) {
-            msg = (diffTime) + "달 전";
-        } else {
-            msg = (diffTime) + "년 전";
-        }
-        return msg;
-    }
 
     private void uploadData() {
         SharedPreference sharedPreference = new SharedPreference();
@@ -240,7 +211,7 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
         String userKey = firebaseAuth.getCurrentUser().getUid();
 
         String color = Integer.toHexString(firstColor);
-        FeedModel feedModel = new FeedModel(imageUrl, userName, profileUrl, firstGravity, color, write.getText().toString(), formatTimeString(date), userKey);
+        FeedModel feedModel = new FeedModel(imageUrl, userName, profileUrl, firstGravity, color, write.getText().toString(), System.currentTimeMillis(), userKey);
         FirebaseData firebaseData = new FirebaseData();
         firebaseData.setDataCallback(this);
         firebaseData.FeedDataUpload(feedModel);
@@ -411,11 +382,13 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onResponse(Call<PixabayImage> call, Response<PixabayImage> response) {
         if (response.isSuccessful()) {
+
             PixabayImage pixabayImage = response.body();
             hitList = pixabayImage.getHits();
             Hit hit = hitList.get(randomNumber(hitList.size()));
             imageUrl = hit.getWebformatURL();
-            setBackgroundImage(hit.getWebformatURL(), null, false);
+            setBackgroundImage(imageUrl, null, false);
+
 
         }
     }
@@ -424,7 +397,6 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
     public void onFailure(Call<PixabayImage> call, Throwable t) {
 
     }
-
 
     private void setBackgroundImage(String path, Uri uri, boolean isUri) {
         if (!this.isDestroyed()) {

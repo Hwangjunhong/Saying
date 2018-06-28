@@ -4,13 +4,19 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -34,7 +40,7 @@ import com.project.hong.saying.Util.SharedPreference;
 public class SettingActivity extends AppCompatActivity implements View.OnClickListener {
 
     private RelativeLayout backBt;
-    private RelativeLayout logoutBt, licenseBt, profileBt, suggestBt, editPwBt, inviteBt;
+    private RelativeLayout logoutBt, licenseBt, profileBt, suggestBt, editPwBt, inviteBt, userDeleteBt;
     private SharedPreference sharedPreference;
     private int userInfo = 0;
 
@@ -55,6 +61,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         suggestBt = findViewById(R.id.suggestion_bt);
         editPwBt = findViewById(R.id.edit_pw_bt);
         inviteBt = findViewById(R.id.invite_bt);
+        userDeleteBt = findViewById(R.id.userDelete_bt);
 
         logoutBt.setOnClickListener(this);
         backBt.setOnClickListener(this);
@@ -63,6 +70,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         suggestBt.setOnClickListener(this);
         editPwBt.setOnClickListener(this);
         inviteBt.setOnClickListener(this);
+        userDeleteBt.setOnClickListener(this);
 
         sharedPreference = new SharedPreference();
         userInfo = sharedPreference.getValue(this, "loginUserInfo", 0);
@@ -105,7 +113,45 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                 sendInvitation();
                 break;
 
+            case R.id.userDelete_bt:
+                userDelete();
+                break;
+
         }
+    }
+
+    private void userDelete() {
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("회원탈퇴 하시겠습니까?")
+                .setPositiveButton("예", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        user.delete()
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            Toast.makeText(SettingActivity.this, "회원탈퇴 하였습니다", Toast.LENGTH_SHORT).show();
+                                            intentActivity(LoginActivity.class);
+                                            ActivityCompat.finishAffinity(SettingActivity.this);
+
+                                        }
+                                    }
+                                });
+
+
+                    }
+                })
+                .setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                }).show();
+
     }
 
     private void sendInvitation() {

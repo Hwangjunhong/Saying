@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import com.facebook.ads.NativeAdsManager;
 import com.project.hong.saying.DataBase.FeedDataCallback;
 import com.project.hong.saying.DataBase.FirebaseData;
 import com.project.hong.saying.DataModel.FeedModel;
+import com.project.hong.saying.DataModel.SayFeedModel;
 import com.project.hong.saying.R;
 import com.project.hong.saying.ScrollToTopClickListener;
 import com.project.hong.saying.Upload.UploadActivity;
@@ -35,16 +37,12 @@ public class AdsSayFragment extends Fragment implements View.OnClickListener, Fe
         ScrollToTopClickListener, SwipeRefreshLayout.OnRefreshListener, FBLoadListener {
 
     private RecyclerView recyclerView;
-    private ArrayList<FeedModel> feedModels = new ArrayList<>();
+    private ArrayList<SayFeedModel> feedModels = new ArrayList<>();
     private AdCustomAdapter adapter;
     private FloatingActionButton fab;
     private FirebaseData firebaseData = new FirebaseData();
     private SwipeRefreshLayout refreshLayout;
 
-    private ArrayList<String> keyList = new ArrayList<>();
-
-
-    ArrayList<String> arrayList = new ArrayList<>();
     FBAdManager manager;
 
     @Nullable
@@ -52,14 +50,8 @@ public class AdsSayFragment extends Fragment implements View.OnClickListener, Fe
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frag_say, container, false);
 
-        setArrayList();
         initView(view);
-//        setRecyclerView();
         setManager();
-        getData();
-
-
-        recyclerView.setOnClickListener(this);
 
         return view;
     }
@@ -109,10 +101,12 @@ public class AdsSayFragment extends Fragment implements View.OnClickListener, Fe
         if (refreshLayout.isRefreshing()) {
             refreshLayout.setRefreshing(false);
         }
-        feedModels.add(0, feedModel);
-        keyList.add(0, key);
-        adapter.notifyItemInserted(0);
+        SayFeedModel sayFeedModel = new SayFeedModel();
+        sayFeedModel.setFeedModel(feedModel);
+        sayFeedModel.setKey(key);
 
+        Log.d("asdasdasd", "asdasdasd");
+        adapter.addData(0, sayFeedModel);
 
     }
 
@@ -130,25 +124,14 @@ public class AdsSayFragment extends Fragment implements View.OnClickListener, Fe
     }
 
 
-    public void refreshFeedData(int position, FeedModel feedModel) {
-        feedModels.set(position, feedModel);
-        adapter.notifyItemChanged(position);
-    }
-
-
-    private void setArrayList() {
-        for (int i = 0; i < 30; i++) {
-            arrayList.add(String.valueOf(i) + String.valueOf(i) + String.valueOf(i));
-        }
-    }
-
-
     private void setRecyclerView() {
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(layoutManager);
 
+        getData();
 
     }
 
@@ -157,7 +140,7 @@ public class AdsSayFragment extends Fragment implements View.OnClickListener, Fe
                 .setAdInterval(10)
                 .setAdsManager(nativeAdsManager)
                 .build();
-        adapter = new AdCustomAdapter(getContext(), feedModels, keyList, setting);
+        adapter = new AdCustomAdapter(getContext(), feedModels, setting);
 
         setRecyclerView();
     }
@@ -175,6 +158,7 @@ public class AdsSayFragment extends Fragment implements View.OnClickListener, Fe
     @Override
     public void onLoadSuccess(NativeAdsManager nativeAdsManager) {
         setAdapter(nativeAdsManager);
+
     }
 
     @Override

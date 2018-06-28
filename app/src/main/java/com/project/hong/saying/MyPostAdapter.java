@@ -14,7 +14,11 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.project.hong.saying.DataModel.CommentModel;
 import com.project.hong.saying.DataModel.FeedModel;
+import com.project.hong.saying.Util.SharedPreference;
 
 import java.util.ArrayList;
 
@@ -23,8 +27,8 @@ import java.util.ArrayList;
  */
 
 public class MyPostAdapter extends RecyclerView.Adapter<MyPostAdapter.ViewHolder>{
-
-    ArrayList<FeedModel> feedModels;
+    ArrayList<CommentModel> commentModels = new ArrayList<>();
+    ArrayList<FeedModel> feedModels = new ArrayList<>();
     Context context;
     LayoutInflater inflater;
     FeedModel item;
@@ -57,9 +61,16 @@ public class MyPostAdapter extends RecyclerView.Adapter<MyPostAdapter.ViewHolder
         holder.contents.setText(item.getContents());
         holder.writerName.setText(item.getUserName());
         if(item.getScrap() != null){
-            holder.scrapCount.setText("스크랩수 : " + item.getScrap().size());
+            holder.scrapCount.setText(""+item.getScrap().size());
         }else{
-            holder.scrapCount.setText("스크랩수 : 0");
+            holder.scrapCount.setText("0");
+        }
+
+        if(item.getComment() == null){
+            holder.replyCount.setText("0");
+        }else {
+            holder.replyCount.setText(item.getComment().size()+"");
+
         }
 
     }
@@ -72,8 +83,9 @@ public class MyPostAdapter extends RecyclerView.Adapter<MyPostAdapter.ViewHolder
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView image;
-        TextView contents, scrapCount, writerName;
+        TextView contents, scrapCount, writerName, replyCount;
         View itemView;
+
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -87,6 +99,7 @@ public class MyPostAdapter extends RecyclerView.Adapter<MyPostAdapter.ViewHolder
             contents = itemView.findViewById(R.id.contents);
             scrapCount = itemView.findViewById(R.id.scrap_count);
             writerName = itemView.findViewById(R.id.writer_name);
+            replyCount = itemView.findViewById(R.id.reply_count);
             contents.setOnClickListener(this);
             image.setOnClickListener(this);
         }

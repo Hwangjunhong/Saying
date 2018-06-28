@@ -68,7 +68,6 @@ public class FireBaseFile implements OnSuccessListener<UploadTask.TaskSnapshot>,
     @Override
     public void onFailure(@NonNull Exception e) {
         fileCallback.completeFileUpload(null);
-        Log.d("asdasdasd", e.getMessage());
     }
 
 

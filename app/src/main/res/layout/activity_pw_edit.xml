@@ -63,7 +63,7 @@
             android:maxLines="1"
             android:textCursorDrawable="@drawable/search_cursor"
             app:met_clearButton="true"
-            app:met_helperText="8자 이상 입력해 주세요"
+            app:met_helperText="기존의 비밀번호를 입력해 주세요"
             app:met_helperTextAlwaysShown="true"
             app:met_helperTextColor="@color/colorPrimary" />
 
@@ -74,12 +74,12 @@
             android:layout_marginEnd="40dp"
             android:layout_marginStart="40dp"
             android:layout_marginTop="20dp"
-            android:hint="Password"
+            android:hint="Change Password"
             android:inputType="textPassword"
             android:maxLines="1"
             android:textCursorDrawable="@drawable/search_cursor"
             app:met_clearButton="true"
-            app:met_helperText="8자 이상 입력해 주세요"
+            app:met_helperText="변경할 비밀번호를 8자 이상 입력해 주세요"
             app:met_helperTextAlwaysShown="true"
             app:met_helperTextColor="@color/colorPrimary" />
 
@@ -91,12 +91,12 @@
             android:layout_marginEnd="40dp"
             android:layout_marginStart="40dp"
             android:layout_marginTop="20dp"
-            android:hint="Retype Password"
+            android:hint="Retype Change Password"
             android:inputType="textPassword"
             android:maxLines="1"
             android:textCursorDrawable="@drawable/search_cursor"
             app:met_clearButton="true"
-            app:met_helperText="8자 이상 입력해 주세요"
+            app:met_helperText="다시 한번 입력해 주세요"
             app:met_helperTextAlwaysShown="true"
             app:met_helperTextColor="@color/colorPrimary" />
 
@@ -116,6 +116,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:layout_alignParentBottom="true"
+        android:textColor="@color/colorPrimary"
         android:gravity="center"
         android:text="완료"
         android:textSize="17dp" />

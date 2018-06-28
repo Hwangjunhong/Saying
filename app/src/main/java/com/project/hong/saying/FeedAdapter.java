@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +18,10 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.request.RequestOptions;
 import com.project.hong.saying.DataModel.FeedModel;
+import com.project.hong.saying.Util.SharedPreference;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -40,6 +43,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
     private Typeface typeface;
     private ArrayList<String> keyList = new ArrayList<>();
 
+    int position;
+
+    public FeedAdapter() {
+    }
 
     public FeedAdapter(Context context, ArrayList<FeedModel> feedModels, ArrayList<String> keyList) {
         this.context = context;
@@ -74,7 +81,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         holder.itemView.setTag(position);
 
 
-
     }
 
     @Override
@@ -98,7 +104,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         TextView contents;
         View itemView;
         CircleImageView profileImage;
-        TextView userName, time;
+        TextView userName;
 
 
         public ViewHolder(View itemView) {
@@ -122,7 +128,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
         @Override
         public void onClick(View v) {
-            int position = (int) itemView.getTag();
+            position = (int) itemView.getTag();
             FeedModel model = feedModels.get(position);
             String key = keyList.get(position);
 
@@ -130,15 +136,14 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             Bundle bundle = new Bundle();
             bundle.putSerializable("feedData", model);
             intent.putExtras(bundle);
-            intent.putExtra("position" , position);
+            intent.putExtra("position", position);
             intent.putExtra("feedKey", key);
-            if(context instanceof MainActivity){
-                ((MainActivity)context).startActivityForResult(intent, 100);
+            if (context instanceof MainActivity) {
+                ((MainActivity) context).startActivityForResult(intent, 100);
             }
 
         }
 
     }
-
 
 }

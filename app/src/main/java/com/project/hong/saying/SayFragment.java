@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.edge.fbadhelper.FBAdManager;
 import com.project.hong.saying.DataBase.FeedDataCallback;
 import com.project.hong.saying.DataBase.FirebaseData;
 import com.project.hong.saying.DataModel.FeedModel;
@@ -36,8 +35,6 @@ public class SayFragment extends Fragment implements View.OnClickListener, FeedD
 
     private ArrayList<String> keyList = new ArrayList<>();
 
-
-    FBAdManager manager;
 
     @Nullable
     @Override

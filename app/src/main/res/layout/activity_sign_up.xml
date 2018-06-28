@@ -39,7 +39,7 @@
         android:inputType="textEmailAddress"
         android:maxLines="1"
         app:met_clearButton="true"
-        app:met_helperText="Ex) amuge@naver.com"
+        app:met_helperText="Ex) amugae@naver.com"
         app:met_helperTextAlwaysShown="true"
         app:met_helperTextColor="@color/colorPrimary"
         android:textCursorDrawable="@drawable/search_cursor"/>
